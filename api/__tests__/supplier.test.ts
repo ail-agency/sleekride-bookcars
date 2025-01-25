@@ -633,8 +633,8 @@ describe('POST /api/frontend-suppliers', () => {
   })
 })
 
-describe('POST /api/backend-suppliers', () => {
-  it('should return backend suppliers', async () => {
+describe('POST /api/backoffice-suppliers', () => {
+  it('should return backoffice suppliers', async () => {
     const token = await testHelper.signinAsAdmin()
 
     // test success (full filter)

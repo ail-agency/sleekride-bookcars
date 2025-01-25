@@ -9,15 +9,15 @@ sudo chmod +x -R /opt/bookcars/__scripts
 
 /bin/bash /opt/bookcars/__scripts/free-mem.sh
 
-cd /opt/bookcars/backend
+cd /opt/bookcars/backoffice
 sudo rm -rf build
 
 npm install --force
 npm run build
 
-sudo rm -rf /var/www/bookcars/backend
-sudo mkdir -p /var/www/bookcars/backend
-sudo cp -rf build/* /var/www/bookcars/backend
+sudo rm -rf /var/www/bookcars/backoffice
+sudo mkdir -p /var/www/bookcars/backoffice
+sudo cp -rf build/* /var/www/bookcars/backoffice
 
 sudo rm -rf /var/cache/nginx
 sudo systemctl restart nginx

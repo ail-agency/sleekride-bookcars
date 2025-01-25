@@ -41,16 +41,8 @@ const CURRENCIES: Currency[] = [
     symbol: '$',
   },
   {
-    code: 'EUR',
-    symbol: '€',
-  },
-  {
-    code: 'GBP',
-    symbol: '£',
-  },
-  {
-    code: 'AUD',
-    symbol: '$',
+    code: 'VND',
+    symbol: '₫',
   },
 ]
 

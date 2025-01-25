@@ -20,7 +20,7 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   const isFrontend = authHelper.isFrontend(req)
 
   if (isBackend) {
-    token = req.signedCookies[env.BACKEND_AUTH_COOKIE_NAME] as string // backend
+    token = req.signedCookies[env.BACKEND_AUTH_COOKIE_NAME] as string // backoffice
   } else if (isFrontend) {
     token = req.signedCookies[env.FRONTEND_AUTH_COOKIE_NAME] as string // frontend
   } else {

@@ -145,7 +145,7 @@ export const FRONTEND_AUTH_COOKIE_NAME = 'bc-x-access-token-frontend'
  *
  * @type {"bc-x-access-token-frontend"}
  */
-export const BACKEND_AUTH_COOKIE_NAME = 'bc-x-access-token-backend'
+export const BACKEND_AUTH_COOKIE_NAME = 'bc-x-access-token-backoffice'
 
 /**
  * Mobile App and unit tests authentication header name.
@@ -285,7 +285,7 @@ export const CDN_TEMP_LICENSES = __env__('BC_CDN_TEMP_LICENSES', true)
  *
  * @type {string}
  */
-export const BACKEND_HOST = __env__('BC_BACKEND_HOST', true)
+export const BACKOFFICE_HOST = __env__('BC_BACKOFFICE_HOST', true)
 
 /**
  * Frontend host.

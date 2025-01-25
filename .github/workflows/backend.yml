@@ -16,7 +16,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./backend/
+        working-directory: ./backoffice/
 
     strategy:
       matrix:
@@ -30,7 +30,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: './backend/package-lock.json'
+        cache-dependency-path: './backoffice/package-lock.json'
     - run: npm install --force
     - run: npm run lint
     - run: npm run build

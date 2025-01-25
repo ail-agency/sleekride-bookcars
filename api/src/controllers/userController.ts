@@ -239,7 +239,7 @@ export const create = async (req: Request, res: Response) => {
         ${i18n.t('HELLO')}${user.fullName},<br><br>
         ${i18n.t('ACCOUNT_ACTIVATION_LINK')}<br><br>
         ${helper.joinURL(
-          user.type === bookcarsTypes.UserType.User ? env.FRONTEND_HOST : env.BACKEND_HOST,
+          user.type === bookcarsTypes.UserType.User ? env.FRONTEND_HOST : env.BACKOFFICE_HOST,
           'activate',
         )}/?u=${encodeURIComponent(user.id)}&e=${encodeURIComponent(user.email)}&t=${encodeURIComponent(token.token)}<br><br>
         ${i18n.t('REGARDS')}<br>
@@ -380,7 +380,7 @@ export const resend = async (req: Request, res: Response) => {
           ${i18n.t('HELLO')}${user.fullName},<br><br>  
           ${reset ? i18n.t('PASSWORD_RESET_LINK') : i18n.t('ACCOUNT_ACTIVATION_LINK')}<br><br>  
           ${helper.joinURL(
-            user.type === bookcarsTypes.UserType.User ? env.FRONTEND_HOST : env.BACKEND_HOST,
+            user.type === bookcarsTypes.UserType.User ? env.FRONTEND_HOST : env.BACKOFFICE_HOST,
             reset ? 'reset-password' : 'activate',
           )}/?u=${encodeURIComponent(user.id)}&e=${encodeURIComponent(user.email)}&t=${encodeURIComponent(token.token)}<br><br>
           ${i18n.t('REGARDS')}<br>
@@ -1540,7 +1540,7 @@ export const verifyRecaptcha = async (req: Request, res: Response) => {
 export const sendEmail = async (req: Request, res: Response) => {
   try {
     const whitelist = [
-      helper.trimEnd(env.BACKEND_HOST, '/'),
+      helper.trimEnd(env.BACKOFFICE_HOST, '/'),
       helper.trimEnd(env.FRONTEND_HOST, '/'),
     ]
     const { origin } = req.headers

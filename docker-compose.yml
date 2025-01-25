@@ -1,37 +1,53 @@
 version: "3.8"
 services:
+  caddy:
+     image: caddy:latest
+     restart: always
+     ports:
+       - 8001:8001
+       - 8002:8002
+#       - 80:80
+#       - 443:443
+     volumes:
+       - ./__config/Caddyfile:/etc/caddy/Caddyfile
+       - cdn:/var/www/cdn
+     networks:
+       - app-network
   api:
-    build: 
+    build:
       context: .
       dockerfile: ./api/Dockerfile
     env_file: ./api/.env.docker
+    environment:
+      - BC_DB_URI=mongodb://admin:PASSWORD@mongo:27017/bookcars?authSource=admin&appName=bookcars
     restart: always
-    ports:
-      - 4002:4002
     depends_on:
       - mongo
     volumes:
       - cdn:/var/www/cdn/bookcars
+    networks:
+      - app-network
+      - db-network
 
   mongo:
     image: mongo:latest
-    command: mongod --quiet --logpath /dev/null
     restart: always
     environment:
       # Provide your credentials here
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: PASSWORD
-    ports:
-      - 27017:27017
+    networks:
+      - app-network
+      - db-network
 
-  backend:
+  backoffice:
     build: 
       context: .
-      dockerfile: ./backend/Dockerfile
+      dockerfile: backoffice/Dockerfile
     depends_on:
       - api
-    ports:
-      - 3001:3001
+    networks:
+      - app-network
 
   frontend:
     build: 
@@ -39,11 +55,14 @@ services:
       dockerfile: ./frontend/Dockerfile
     depends_on:
       - api
-    ports:
-      - 80:80
-      - 443:443
     volumes:
       - cdn:/var/www/cdn/bookcars
+    networks:
+      - app-network
 
 volumes:
   cdn:
+
+networks:
+  app-network:
+  db-network:

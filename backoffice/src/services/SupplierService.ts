@@ -89,7 +89,7 @@ export const getAllSuppliers = (): Promise<bookcarsTypes.User[]> =>
     .then((res) => res.data)
 
 /**
-* Get backend suppliers.
+* Get backoffice suppliers.
 *
 * @param {bookcarsTypes.GetCarsPayload} data
 * @returns {Promise<bookcarsTypes.User[]>}
