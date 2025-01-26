@@ -4,8 +4,8 @@ import * as env from '../config/env.config'
 import * as logger from '../common/logger'
 
 const whitelist = [
-  helper.trimEnd(env.BACKOFFICE_HOST, '/'),
-  helper.trimEnd(env.FRONTEND_HOST, '/'),
+  `https://${env.BACKOFFICE_HOST}`,
+  `https://${env.FRONTEND_HOST}`,
 ]
 
 /**
