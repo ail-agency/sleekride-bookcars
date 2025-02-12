@@ -2,9 +2,9 @@
   "expo": {
     "jsEngine": "hermes",
     "newArchEnabled": true,
-    "name": "BookCars",
-    "version": "5.5.0",
-    "slug": "bookcars",
+    "name": "Sleekride",
+    "version": "0.0.1",
+    "slug": "sleekride",
     "icon": "./assets/icon.png",
     "assetBundlePatterns": [
       "**/*"
@@ -28,7 +28,7 @@
       "package": "com.bookcars"
     },
     "ios": {
-      "buildNumber": "5.5.0",
+      "buildNumber": "0.0.1",
       "supportsTablet": true,
       "icon": "./assets/icon.png",
       // "splash": {
@@ -63,14 +63,14 @@
         }
       ]
     ],
-    "owner": "aelassas",
+    "owner": "deskwork5752",
     "extra": {
       "eas": {
-        "projectId": "fe1ab335-41ae-4a35-960b-0052b493db49"
+        "projectId": "70b8def4-d806-4e67-b9aa-594b95673422"
       }
     },
     "updates": {
-      "url": "https://u.expo.dev/fe1ab335-41ae-4a35-960b-0052b493db49"
+      "url": "https://u.expo.dev/70b8def4-d806-4e67-b9aa-594b95673422"
     },
     "experiments": {
       "tsconfigPaths": true
