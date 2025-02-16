@@ -114,6 +114,7 @@ const TextInputComponent = (
           }}
           secureTextEntry={props.secureTextEntry}
           placeholder={props.label}
+          placeholderTextColor={'rgba(0, 0, 0, 0.28)'}
           value={value}
           onChangeText={onChangeText}
           onKeyPress={props.onKeyPress}

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { StyleSheet, ScrollView, View, TextInput as ReactTextInput } from 'react-native'
+import { StyleSheet, ScrollView, View, TextInput as ReactTextInput, Keyboard, TouchableWithoutFeedback, ActivityIndicator } from 'react-native'
 import { useIsFocused } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import validator from 'validator'
@@ -29,6 +29,7 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
   const [passwordLengthError, setPasswordLengthError] = useState(false)
   const [passwordError, setPasswordError] = useState(false)
   const [blacklisted, setBlacklisted] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const emailRef = useRef<ReactTextInput>(null)
   const passwordRef = useRef<ReactTextInput>(null)
@@ -139,6 +140,12 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
   }
 
   const onPressSignIn = async () => {
+    console.log('onPressSignIn', {
+      email,
+      password
+    })
+    setLoading(true)
+
     const _emailValid = await validateEmail()
     if (!_emailValid) {
       return
@@ -155,11 +162,11 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
       stayConnected,
       mobile: true,
     }
-
     const res = await UserService.signin(data)
 
     try {
       if (res.status === 200) {
+        setLoading(false)
         if (res.data.blacklisted) {
           await UserService.signout(navigation, false)
           setPasswordError(false)
@@ -173,10 +180,12 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
           navigation.navigate('Home', { d: new Date().getTime() })
         }
       } else {
+        setLoading(false)
         setPasswordError(true)
         setBlacklisted(false)
       }
     } catch (err) {
+      setLoading(false)
       helper.error(err)
     }
   }
@@ -190,7 +199,8 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
   }
 
   return (
-    <View style={styles.master}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.master}>
       <Header route={route} title={i18n.t('SIGN_IN_TITLE')} hideTitle={false} loggedIn={false} />
 
       <ScrollView
@@ -222,9 +232,12 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
 
           <Switch style={styles.stayConnected} textStyle={styles.stayConnectedText} label={i18n.t('STAY_CONNECTED')} value={stayConnected} onValueChange={onChangeStayConnected} />
 
-          <Button style={styles.component} label={i18n.t('SIGN_IN')} onPress={onPressSignIn} />
+          <Button style={styles.component} label={i18n.t('SIGN_IN')} onPress={() => {
+            onPressSignIn()
+          }} />
 
           <Button style={styles.component} color="secondary" label={i18n.t('SIGN_UP')} onPress={onPressSignUp} />
+          {loading && <ActivityIndicator size="large" color="#0000ff" />}
 
           <Link style={styles.link} label={i18n.t('FORGOT_PASSWORD')} onPress={onPressForgotPassword} />
 
@@ -232,6 +245,7 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
         </View>
       </ScrollView>
     </View>
+    </TouchableWithoutFeedback>
   )
 }
 

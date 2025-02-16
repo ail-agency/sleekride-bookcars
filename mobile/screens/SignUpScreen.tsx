@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { StyleSheet, ScrollView, View, TextInput as ReactTextInput } from 'react-native'
+import { StyleSheet, ScrollView, View, TextInput as ReactTextInput, Keyboard, TouchableWithoutFeedback } from 'react-native'
 import { useIsFocused } from '@react-navigation/native'
 import { intervalToDuration } from 'date-fns'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
@@ -317,7 +317,8 @@ const SignUpScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
   }
 
   return (
-    <View style={styles.master}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.master}>
       <Header route={route} title={i18n.t('SIGN_UP_TITLE')} hideTitle={false} loggedIn={false} />
 
       {language && (
@@ -400,6 +401,7 @@ const SignUpScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
 
       {loading && <Backdrop message={i18n.t('PLEASE_WAIT')} />}
     </View>
+    </TouchableWithoutFeedback>
   )
 }
 

@@ -148,6 +148,7 @@ const LocationSelectList = ({
             borderRadius: 10,
             // paddingLeft: 15,
             fontSize: small ? 14 : 16,
+            color: 'black'
           },
         }}
         rightButtonsContainerStyle={{

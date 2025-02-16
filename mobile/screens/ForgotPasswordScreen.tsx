@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { StyleSheet, ScrollView, View, Text, TextInput as ReactTextInput } from 'react-native'
+import { StyleSheet, ScrollView, View, Text, TextInput as ReactTextInput, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import { useIsFocused } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
@@ -105,7 +105,8 @@ const ForgotPasswordScreen = ({ navigation, route }: NativeStackScreenProps<Stac
   }
 
   return (
-    <View style={styles.master}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.master}>
       <Header route={route} title={i18n.t('FORGOT_PASSWORD')} hideTitle={false} loggedIn={false} />
 
       <ScrollView
@@ -137,6 +138,7 @@ const ForgotPasswordScreen = ({ navigation, route }: NativeStackScreenProps<Stac
         )}
       </ScrollView>
     </View>
+    </TouchableWithoutFeedback>
   )
 }
 
