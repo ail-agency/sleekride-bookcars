@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, Pressable } from 'react-native'
+import { StyleSheet, Text, Pressable, ActivityIndicator } from 'react-native'
 import colors from '@/themes/colors'
 
 interface ButtonProps {
@@ -7,6 +7,8 @@ interface ButtonProps {
   color?: string
   style?: object
   label: string
+  loading?: boolean
+  disabled?: boolean
   onPress?: () => void
 }
 
@@ -15,6 +17,8 @@ const Button = ({
   color,
   style,
   label,
+  loading,
+  disabled,
   onPress: onButtonPress
 }: ButtonProps) => {
   const small = size === 'small'
@@ -43,8 +47,8 @@ const Button = ({
   })
 
   return (
-    <Pressable style={{ ...style, ...styles.button }} onPress={onPress}>
-      <Text style={styles.text}>{label}</Text>
+    <Pressable disabled={disabled} style={{ ...style, ...styles.button }} onPress={onPress}>
+      {loading ? <ActivityIndicator size={10} color={colors.white} /> : <Text style={styles.text}>{label}</Text>}
     </Pressable>
   )
 }
