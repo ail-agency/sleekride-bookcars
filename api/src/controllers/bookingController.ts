@@ -265,13 +265,15 @@ export const checkout = async (req: Request, res: Response) => {
     }
 
     if (!body.payLater) {
-      const { paymentIntentId, sessionId } = body
+      const { payPal, paymentIntentId, sessionId } = body
 
-      if (!paymentIntentId && !sessionId) {
+      if (!payPal && !paymentIntentId && !sessionId) {
         throw new Error('paymentIntentId and sessionId not found')
       }
 
-      body.booking.customerId = body.customerId
+      if (!payPal) {
+        body.booking.customerId = body.customerId
+      }
 
       if (paymentIntentId) {
         const paymentIntent = await stripeAPI.paymentIntents.retrieve(paymentIntentId)
@@ -282,7 +284,7 @@ export const checkout = async (req: Request, res: Response) => {
         }
 
         body.booking.paymentIntentId = paymentIntentId
-        body.booking.status = bookcarsTypes.BookingStatus.Paid
+        body.booking.status = body.booking.isDeposit ? bookcarsTypes.BookingStatus.Deposit : bookcarsTypes.BookingStatus.Paid
       } else {
         //
         // Bookings created from checkout with Stripe are temporary
@@ -291,7 +293,7 @@ export const checkout = async (req: Request, res: Response) => {
         let expireAt = new Date()
         expireAt.setSeconds(expireAt.getSeconds() + env.BOOKING_EXPIRE_AT)
 
-        body.booking.sessionId = body.sessionId
+        body.booking.sessionId = !payPal ? body.sessionId : undefined
         body.booking.status = bookcarsTypes.BookingStatus.Void
         body.booking.expireAt = expireAt
 
@@ -350,7 +352,7 @@ export const checkout = async (req: Request, res: Response) => {
       await notify(user, booking.id, supplier, message)
 
       // Notify admin
-      const admin = !!env.ADMIN_EMAIL && await User.findOne({ email: env.ADMIN_EMAIL, type: bookcarsTypes.UserType.Admin })
+      const admin = !!env.ADMIN_EMAIL && (await User.findOne({ email: env.ADMIN_EMAIL, type: bookcarsTypes.UserType.Admin }))
       if (admin) {
         i18n.locale = admin.language
         message = body.payLater ? i18n.t('BOOKING_PAY_LATER_NOTIFICATION') : i18n.t('BOOKING_PAID_NOTIFICATION')
@@ -1057,7 +1059,7 @@ export const cancelBooking = async (req: Request, res: Response) => {
       await notify(booking.driver, booking.id, supplier, i18n.t('CANCEL_BOOKING_NOTIFICATION'))
 
       // Notify admin
-      const admin = !!env.ADMIN_EMAIL && await User.findOne({ email: env.ADMIN_EMAIL, type: bookcarsTypes.UserType.Admin })
+      const admin = !!env.ADMIN_EMAIL && (await User.findOne({ email: env.ADMIN_EMAIL, type: bookcarsTypes.UserType.Admin }))
       if (admin) {
         i18n.locale = admin.language
         await notify(booking.driver, booking.id, admin, i18n.t('CANCEL_BOOKING_NOTIFICATION'))

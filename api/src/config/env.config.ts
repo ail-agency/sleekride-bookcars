@@ -36,11 +36,11 @@ export const LANGUAGES = [
 ]
 
 /**
- * Website Name
+ * Website Name.
  *
  * @type {string}
  */
-export const WEBSITE_NAME = __env__('BC_WEBSITE_NAME', false, 'bookcars')
+export const WEBSITE_NAME = __env__('BC_WEBSITE_NAME', false, 'BookCars')
 
 /**
  * Server Port. Default is 4002.
@@ -336,6 +336,27 @@ stripeSessionExpireAt = stripeSessionExpireAt <= 82800 ? stripeSessionExpireAt :
 export const STRIPE_SESSION_EXPIRE_AT = stripeSessionExpireAt
 
 /**
+ * Indicates whether PayPal is used in sandbox mode or production.
+ *
+ * @type {boolean}
+ */
+export const PAYPAL_SANDBOX = helper.StringToBoolean(__env__('BC_PAYPAL_SANDBOX', false, 'true'))
+
+/**
+ * PayPal client ID.
+ *
+ * @type {string}
+ */
+export const PAYPAL_CLIENT_ID = __env__('BC_PAYPAL_CLIENT_ID', false, 'PAYPAL_CLIENT_ID')
+
+/**
+ * PayPal client secret.
+ *
+ * @type {string}
+ */
+export const PAYPAL_CLIENT_SECRET = __env__('BC_PAYPAL_CLIENT_SECRET', false, 'PAYPAL_CLIENT_SECRET')
+
+/**
  * Booking expiration in seconds.
  * Bookings created from checkout with Stripe are temporary and are automatically deleted if the payment checkout session expires.
  *
@@ -374,6 +395,21 @@ export const RECAPTCHA_SECRET = __env__('BC_RECAPTCHA_SECRET', false)
  * @type {string}
  */
 export const TIMEZONE = __env__('BC_TIMEZONE', false, 'UTC')
+
+/**
+ * ipinfo.io API key.
+ * Required for more tha, 1000 requests/day.
+ *
+ * @type {string}
+ */
+export const IPINFO_API_KEY = __env__('BC_IPINFO_API_KEY', false)
+
+/**
+ * Default ISO 2 country code ipinfo.io.
+ *
+ * @type {string}
+ */
+export const IPINFO_DEFAULT_COUNTRY = __env__('BC_IPINFO_DEFAULT_COUNTRY', false, 'US')
 
 /**
  * User Document.
@@ -485,6 +521,21 @@ export interface Booking extends Document {
   customerId?: string
   expireAt?: Date
   isDeposit: boolean
+  paypalOrderId?: string
+}
+
+/**
+ * Car Document.
+ *
+ * @export
+ * @interface Car
+ * @typedef {Car}
+ * @extends {Document}
+ */
+export interface DateBasedPrice extends Document {
+  startDate: Date
+  endDate: Date
+  dailyPrice: number
 }
 
 /**
@@ -509,6 +560,9 @@ export interface Car extends Document {
   discountedWeeklyPrice: number | null
   monthlyPrice: number | null
   discountedMonthlyPrice: number | null
+
+  isDateBasedPrice: boolean
+  dateBasedPrices: Types.ObjectId[]
 
   deposit: number
   available: boolean
