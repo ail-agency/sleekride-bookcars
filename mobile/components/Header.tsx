@@ -11,6 +11,7 @@ import * as env from '@/config/env.config'
 import { useGlobalContext, GlobalContextType } from '@/context/GlobalContext'
 import * as NotificationService from '@/services/NotificationService'
 import CurrencyMenu from '@/components/CurrencyMenu'
+import colors from '@/themes/colors'
 
 interface HeaderProps {
   route?: RouteProp<StackParams, keyof StackParams>,
@@ -101,7 +102,7 @@ const Header = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f37022',
+    backgroundColor: colors.primary,
     zIndex: 40,
     elevation: 40,
     height: 52,

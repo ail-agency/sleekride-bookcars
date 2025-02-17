@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { StyleSheet, ScrollView, View, TextInput as ReactTextInput, Keyboard, TouchableWithoutFeedback, ActivityIndicator } from 'react-native'
+import { StyleSheet, ScrollView, View, TextInput as ReactTextInput, Keyboard, TouchableWithoutFeedback, Image, Text, Pressable } from 'react-native'
 import { useIsFocused } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import validator from 'validator'
@@ -7,13 +7,14 @@ import * as bookcarsTypes from ':bookcars-types'
 
 import TextInput from '@/components/TextInput'
 import Button from '@/components/Button'
-import Link from '@/components/Link'
 import i18n from '@/lang/i18n'
 import Error from '@/components/Error'
 import * as UserService from '@/services/UserService'
 import * as helper from '@/common/helper'
-import Switch from '@/components/Switch'
+// import Switch from '@/components/Switch'
 import Header from '@/components/Header'
+import colors from '@/themes/colors'
+import GoogleLogo from '@/components/GoogleLogo'
 
 const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams, 'SignIn'>) => {
   const isFocused = useIsFocused()
@@ -29,7 +30,7 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
   const [passwordLengthError, setPasswordLengthError] = useState(false)
   const [passwordError, setPasswordError] = useState(false)
   const [blacklisted, setBlacklisted] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 
   const emailRef = useRef<ReactTextInput>(null)
   const passwordRef = useRef<ReactTextInput>(null)
@@ -135,16 +136,15 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
     setPasswordError(false)
   }
 
-  const onChangeStayConnected = (checked: boolean) => {
-    setStayConnected(checked)
-  }
+  // const onChangeStayConnected = (checked: boolean) => {
+  //   setStayConnected(checked)
+  // }
 
   const onPressSignIn = async () => {
     console.log('onPressSignIn', {
       email,
       password
     })
-    setLoading(true)
 
     const _emailValid = await validateEmail()
     if (!_emailValid) {
@@ -166,7 +166,6 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
 
     try {
       if (res.status === 200) {
-        setLoading(false)
         if (res.data.blacklisted) {
           await UserService.signout(navigation, false)
           setPasswordError(false)
@@ -180,32 +179,34 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
           navigation.navigate('Home', { d: new Date().getTime() })
         }
       } else {
-        setLoading(false)
         setPasswordError(true)
         setBlacklisted(false)
       }
     } catch (err) {
-      setLoading(false)
       helper.error(err)
     }
-  }
-
-  const onPressSignUp = () => {
-    navigation.navigate('SignUp', {})
   }
 
   const onPressForgotPassword = () => {
     navigation.navigate('ForgotPassword', {})
   }
 
+  const onPressSignUp = () => {
+    navigation.navigate('SignUp', {})
+  }
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.master}>
       <Header route={route} title={i18n.t('SIGN_IN_TITLE')} hideTitle={false} loggedIn={false} />
+      <View style={styles.img}>
+        <Image source={require('../assets/sleekride.png')} style={{ width: 169, height: 100, backgroundColor: 'transparent' }} />
+      </View>
 
       <ScrollView
         contentContainerStyle={styles.container}
         keyboardShouldPersistTaps={helper.android() ? 'handled' : 'always'}
+        scrollEnabled={false}
       >
         <View style={styles.contentContainer}>
           <TextInput
@@ -213,6 +214,7 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
             style={styles.component}
             label={i18n.t('EMAIL')}
             value={email}
+            mailIcon
             error={emailRequired || !emailValid || emailError}
             helperText={(emailRequired && i18n.t('REQUIRED')) || (!emailValid && i18n.t('EMAIL_NOT_VALID')) || (emailError && i18n.t('EMAIL_ERROR')) || ''}
             onChangeText={onChangeEmail}
@@ -221,29 +223,42 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
           <TextInput
             ref={passwordRef}
             style={styles.component}
-            secureTextEntry
+            secureTextEntry={!isPasswordVisible}
             label={i18n.t('PASSWORD')}
             value={password}
+            passwordIcon
             error={passwordRequired || passwordLengthError || passwordError}
             helperText={(passwordRequired && i18n.t('REQUIRED')) || (passwordLengthError && i18n.t('PASSWORD_LENGTH_ERROR')) || (passwordError && i18n.t('PASSWORD_ERROR')) || ''}
             onChangeText={onChangePassword}
             onSubmitEditing={onPressSignIn}
+            onShowPassword={() => setIsPasswordVisible(!isPasswordVisible)}
           />
 
-          <Switch style={styles.stayConnected} textStyle={styles.stayConnectedText} label={i18n.t('STAY_CONNECTED')} value={stayConnected} onValueChange={onChangeStayConnected} />
+          <Pressable style={styles.forgotPwd} onPress={onPressForgotPassword}>
+            <Text style={styles.stayConnectedText}>{i18n.t('FORGOT_PASSWORD')}</Text>
+           </Pressable>
 
           <Button style={styles.component} label={i18n.t('SIGN_IN')} onPress={() => {
             onPressSignIn()
           }} />
 
-          <Button style={styles.component} color="secondary" label={i18n.t('SIGN_UP')} onPress={onPressSignUp} />
-          {loading && <ActivityIndicator size="large" color="#0000ff" />}
+          <View style={styles.link}>
+            <Text style={styles.stayConnectedText}>{'Or Login with'}</Text>
+          </View>
 
-          <Link style={styles.link} label={i18n.t('FORGOT_PASSWORD')} onPress={onPressForgotPassword} />
-
+          <View style={styles.iconContainer}>
+            <View style={styles.borderIcon}>
+              <GoogleLogo width={26} height={26} />
+            </View>
+          </View>
           {blacklisted && <Error style={styles.error} message={i18n.t('IS_BLACKLISTED')} />}
         </View>
       </ScrollView>
+      <View style={styles.latest}>
+        <Text style={styles.account}>{'Don\'t have an account? '}
+          <Text onPress={onPressSignUp} style={styles.signup}>Sign up</Text>
+        </Text>
+      </View>
     </View>
     </TouchableWithoutFeedback>
   )
@@ -252,21 +267,32 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
 const styles = StyleSheet.create({
   master: {
     flex: 1,
+    backgroundColor: colors.background,
+  },
+  img: {
+    alignItems: 'center',
+    marginVertical: 40,
   },
   container: {
     justifyContent: 'center',
     alignItems: 'center',
-    flexGrow: 1,
-    backgroundColor: '#f5f5f5',
+    // flexGrow: 1,
+    marginTop: 20,
+    backgroundColor: colors.background,
   },
   contentContainer: {
     width: '100%',
     maxWidth: 480,
-    alignItems: 'center',
+    // alignItems: 'center',
   },
   component: {
     alignSelf: 'stretch',
     margin: 10,
+  },
+  forgotPwd: {
+    alignItems: 'flex-end',
+    marginRight: 10,
+    marginBottom: 10,
   },
   stayConnected: {
     alignSelf: 'stretch',
@@ -274,14 +300,41 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   stayConnectedText: {
-    fontSize: 12,
+    fontSize: 14,
+    fontWeight: '700',
+    lineHeight: 16,
+    color: colors.iconColor,
   },
-  link: {
-    margin: 10,
+  link: { alignItems: 'center', marginTop: 30, marginBottom: 10 },
+  iconContainer: { alignItems: 'center' },
+  borderIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 44 / 2,
+    borderColor: colors.borderSuccess,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   error: {
     marginTop: 15,
   },
+  latest: {
+    position: 'absolute',
+    bottom: 40,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  account: {
+    fontSize: 14,
+    color: colors.dark
+  },
+  signup: {
+    color: colors.primary,
+    fontWeight: 'bold'
+  }
 })
 
 export default SignInScreen

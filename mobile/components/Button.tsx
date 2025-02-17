@@ -1,5 +1,6 @@
 import React from 'react'
 import { StyleSheet, Text, Pressable } from 'react-native'
+import colors from '@/themes/colors'
 
 interface ButtonProps {
   size?: 'small'
@@ -28,7 +29,7 @@ const Button = ({
     button: {
       height: small ? 37 : 55,
       borderRadius: 10,
-      backgroundColor: color === 'secondary' ? '#999' : '#f37022',
+      backgroundColor: color === 'secondary' ? '#999' : colors.primary,
       alignItems: 'center',
       justifyContent: 'center',
       maxWidth: 480,

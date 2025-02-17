@@ -7,7 +7,8 @@ import {
   NativeSyntheticEvent,
   TextInputKeyPressEventData
 } from 'react-native'
-import { MaterialIcons } from '@expo/vector-icons'
+import { MaterialIcons, AntDesign, Ionicons } from '@expo/vector-icons'
+import colors from '@/themes/colors'
 
 interface TextInputProps {
   size?: 'small' | 'large'
@@ -18,6 +19,9 @@ interface TextInputProps {
   error?: boolean
   label?: string
   hideLabel?: boolean
+  mailIcon?: boolean
+  passwordIcon?: boolean
+  clearIcon?: boolean
   secureTextEntry?: boolean
   readOnly?: boolean
   keyboardType?: 'default' | 'number-pad' | 'decimal-pad' | 'numeric' | 'email-address' | 'phone-pad'
@@ -25,6 +29,7 @@ interface TextInputProps {
   autoCorrect?: boolean
   hideClearButton?: boolean
   helperText?: string
+  onShowPassword?: () => void
   onKeyPress?: (event: NativeSyntheticEvent<TextInputKeyPressEventData>) => void
   onFocus?: () => void
   onBlur?: () => void
@@ -56,7 +61,7 @@ const TextInputComponent = (
       maxWidth: 480,
     },
     label: {
-      backgroundColor: props.backgroundColor ?? '#F5F5F5',
+      backgroundColor: props.backgroundColor ?? colors.background,
       color: 'rgba(0, 0, 0, 0.6)',
       fontSize: 12,
       fontWeight: '400',
@@ -114,7 +119,7 @@ const TextInputComponent = (
           }}
           secureTextEntry={props.secureTextEntry}
           placeholder={props.label}
-          placeholderTextColor={'rgba(0, 0, 0, 0.28)'}
+          placeholderTextColor={colors.placeholderColor}
           value={value}
           onChangeText={onChangeText}
           onKeyPress={props.onKeyPress}
@@ -129,7 +134,24 @@ const TextInputComponent = (
           autoCorrect={props.autoCorrect}
           style={{ ...styles.input, ...props.inputStyle }}
         />
-        {!props.readOnly && value !== '' && !props.hideClearButton && (
+        {!!props.mailIcon && value === '' && !props.hideLabel && (
+          <AntDesign
+            style={styles.clear}
+            name="mail"
+            size={22}
+            color={colors.iconColor}
+            />
+        )}
+        {!!props.passwordIcon && value !== '' && (
+          <Ionicons
+            style={styles.clear}
+            name={props.secureTextEntry ? 'eye-off-outline' : 'eye-outline'}
+            size={22}
+            color={colors.iconColor}
+            onPress={props.onShowPassword}
+            />
+        )}
+        {!!props.clearIcon && (
           <MaterialIcons
             style={styles.clear}
             name="clear"

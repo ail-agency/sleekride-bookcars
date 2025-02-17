@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { StyleSheet, ScrollView, View, TextInput as ReactTextInput, Keyboard, TouchableWithoutFeedback } from 'react-native'
+import { StyleSheet, ScrollView, View, TextInput as ReactTextInput, Keyboard, TouchableWithoutFeedback, Image, Text } from 'react-native'
 import { useIsFocused } from '@react-navigation/native'
-import { intervalToDuration } from 'date-fns'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import validator from 'validator'
 import * as bookcarsTypes from ':bookcars-types'
@@ -9,14 +8,14 @@ import * as bookcarsTypes from ':bookcars-types'
 import i18n from '@/lang/i18n'
 import TextInput from '@/components/TextInput'
 import Button from '@/components/Button'
-import Switch from '@/components/Switch'
 import * as UserService from '@/services/UserService'
 import * as helper from '@/common/helper'
-import DateTimePicker from '@/components/DateTimePicker'
 import * as env from '@/config/env.config'
 import Error from '@/components/Error'
 import Backdrop from '@/components/Backdrop'
 import Header from '@/components/Header'
+import colors from '@/themes/colors'
+import GoogleLogo from '@/components/GoogleLogo'
 
 const SignUpScreen = ({ navigation, route }: NativeStackScreenProps<StackParams, 'SignUp'>) => {
   const isFocused = useIsFocused()
@@ -29,19 +28,15 @@ const SignUpScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
   const [confirmPassword, setConfirmPassword] = useState('')
   const [tosChecked, setTosChecked] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [fullNameRequired, setFullNameRequired] = useState(false)
   const [emailRequired, setEmailRequired] = useState(false)
   const [emailValid, setEmailValid] = useState(true)
   const [emailError, setEmailError] = useState(false)
-  const [phoneValid, setPhoneValid] = useState(true)
-  const [phoneRequired, setPhoneRequired] = useState(false)
-  const [birthDateRequired, setBirthDateRequired] = useState(false)
-  const [birthDateValid, setBirthDateValid] = useState(true)
   const [passwordRequired, setPasswordRequired] = useState(false)
   const [confirmPasswordRequired, setConfirmPasswordRequired] = useState(false)
   const [passwordLengthError, setPasswordLengthError] = useState(false)
   const [confirmPasswordError, setConfirmPasswordError] = useState(false)
   const [tosError, setTosError] = useState(false)
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 
   const fullNameRef = useRef<ReactTextInput>(null)
   const emailRef = useRef<ReactTextInput>(null)
@@ -61,16 +56,9 @@ const SignUpScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
     setPassword('')
     setConfirmPassword('')
     setTosChecked(false)
-
-    setFullNameRequired(false)
     setEmailRequired(false)
     setEmailValid(true)
     setEmailError(false)
-    setPhoneRequired(false)
-    setPhoneValid(true)
-    setBirthDateRequired(false)
-    setBirthDateValid(true)
-    setBirthDateRequired(false)
     setPasswordRequired(false)
     setPasswordLengthError(false)
     setConfirmPasswordRequired(false)
@@ -99,17 +87,6 @@ const SignUpScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
       _init()
     }
   }, [route.params, isFocused])
-
-  const validateFullName = () => {
-    const valid = fullName !== ''
-    setFullNameRequired(!valid)
-    return valid
-  }
-
-  const onChangeFullName = (text: string) => {
-    setFullName(text)
-    setFullNameRequired(false)
-  }
 
   const validateEmail = async () => {
     if (email) {
@@ -152,51 +129,6 @@ const SignUpScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
     setEmailError(false)
   }
 
-  const validatePhone = () => {
-    if (phone) {
-      const _phoneValid = validator.isMobilePhone(phone)
-      setPhoneRequired(false)
-      setPhoneValid(_phoneValid)
-
-      return _phoneValid
-    }
-    setPhoneRequired(true)
-    setPhoneValid(true)
-
-    return false
-  }
-
-  const onChangePhone = (text: string) => {
-    setPhone(text)
-    setPhoneRequired(false)
-    setPhoneValid(true)
-  }
-
-  const validateBirthDate = () => {
-    if (birthDate) {
-      setBirthDateRequired(false)
-
-      const sub = intervalToDuration({
-        start: birthDate,
-        end: new Date(),
-      }).years ?? 0
-      const _birthDateValid = sub >= env.MINIMUM_AGE
-
-      setBirthDateValid(_birthDateValid)
-      return _birthDateValid
-    }
-    setBirthDateRequired(true)
-    setBirthDateValid(true)
-
-    return false
-  }
-
-  const onChangeBirthDate = (date: Date | undefined) => {
-    setBirthDate(date)
-    setBirthDateRequired(false)
-    setBirthDateValid(true)
-  }
-
   const validatePassword = () => {
     if (!password) {
       setPasswordRequired(true)
@@ -237,13 +169,6 @@ const SignUpScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
     setConfirmPasswordError(false)
   }
 
-  const onChangeToS = (checked: boolean) => {
-    setTosChecked(checked)
-    if (checked) {
-      setTosError(false)
-    }
-  }
-
   const error = (err?: unknown) => {
     helper.error(err)
     setLoading(false)
@@ -257,23 +182,8 @@ const SignUpScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
       passwordRef.current?.blur()
       confirmPasswordRef.current?.blur()
 
-      const fullNameValid = validateFullName()
-      if (!fullNameValid) {
-        return
-      }
-
       const _emailValid = await validateEmail()
       if (!_emailValid) {
-        return
-      }
-
-      const _phoneValid = validatePhone()
-      if (!_phoneValid) {
-        return
-      }
-
-      const _birthDateValid = validateBirthDate()
-      if (!birthDate || !_birthDateValid) {
         return
       }
 
@@ -316,10 +226,17 @@ const SignUpScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
     }
   }
 
+  const onPressSignIn = () => {
+    navigation.navigate('SignIn', {})
+  }
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.master}>
       <Header route={route} title={i18n.t('SIGN_UP_TITLE')} hideTitle={false} loggedIn={false} />
+      <View style={styles.img}>
+        <Image source={require('../assets/sleekride.png')} style={{ width: 169, height: 100, backgroundColor: 'transparent' }} />
+      </View>
 
       {language && (
         <ScrollView
@@ -328,71 +245,49 @@ const SignUpScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
         >
           <View style={styles.contentContainer}>
             <TextInput
-              ref={fullNameRef}
-              style={styles.component}
-              label={i18n.t('FULL_NAME')}
-              value={fullName}
-              error={fullNameRequired}
-              helperText={(fullNameRequired && i18n.t('REQUIRED')) || ''}
-              onChangeText={onChangeFullName}
-            />
-
-            <TextInput
               ref={emailRef}
               style={styles.component}
               label={i18n.t('EMAIL')}
               value={email}
+              mailIcon
               error={emailRequired || !emailValid || emailError}
               helperText={(emailRequired && i18n.t('REQUIRED')) || (!emailValid && i18n.t('EMAIL_NOT_VALID')) || (emailError && i18n.t('EMAIL_ALREADY_REGISTERED')) || ''}
               onChangeText={onChangeEmail}
             />
-
-            <TextInput
-              ref={phoneRef}
-              style={styles.component}
-              label={i18n.t('PHONE')}
-              value={phone}
-              error={phoneRequired || !phoneValid}
-              helperText={(phoneRequired && i18n.t('REQUIRED')) || (!phoneValid && i18n.t('PHONE_NOT_VALID')) || ''}
-              onChangeText={onChangePhone}
-            />
-
-            <DateTimePicker
-              mode="date"
-              locale={language}
-              style={styles.date}
-              label={i18n.t('BIRTH_DATE')}
-              value={birthDate}
-              error={birthDateRequired || !birthDateValid}
-              helperText={(birthDateRequired && i18n.t('REQUIRED')) || (!birthDateValid && i18n.t('BIRTH_DATE_NOT_VALID')) || ''}
-              onChange={onChangeBirthDate}
-            />
-
             <TextInput
               ref={passwordRef}
               style={styles.component}
-              secureTextEntry
+              secureTextEntry={!isPasswordVisible}
               label={i18n.t('PASSWORD')}
               value={password}
               error={passwordRequired || passwordLengthError}
               helperText={(passwordRequired && i18n.t('REQUIRED')) || (passwordLengthError && i18n.t('PASSWORD_LENGTH_ERROR')) || ''}
               onChangeText={onChangePassword}
+              onShowPassword={() => setIsPasswordVisible(!isPasswordVisible)}
             />
 
             <TextInput
               ref={confirmPasswordRef}
               style={styles.component}
-              secureTextEntry
+              secureTextEntry={!isPasswordVisible}
               label={i18n.t('CONFIRM_PASSWORD')}
               value={confirmPassword}
               error={confirmPasswordRequired || confirmPasswordError}
               helperText={(confirmPasswordRequired && i18n.t('REQUIRED')) || (confirmPasswordError && i18n.t('PASSWORDS_DONT_MATCH')) || ''}
               onChangeText={onChangeConfirmPassword}
+              onShowPassword={() => setIsPasswordVisible(!isPasswordVisible)}
             />
-
-            <Switch style={styles.component} textStyle={styles.tosText} label={i18n.t('ACCEPT_TOS')} value={tosChecked} onValueChange={onChangeToS} />
-
             <Button style={styles.component} label={i18n.t('SIGN_UP')} onPress={onPressSignUp} />
+
+            <View style={styles.link}>
+              <Text style={styles.stayConnectedText}>{'Or Sign Up with'}</Text>
+            </View>
+
+            <View style={styles.iconContainer}>
+            <View style={styles.borderIcon}>
+              <GoogleLogo width={26} height={26} />
+            </View>
+          </View>
 
             {tosError && <Error message={i18n.t('TOS_ERROR')} />}
           </View>
@@ -400,6 +295,11 @@ const SignUpScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
       )}
 
       {loading && <Backdrop message={i18n.t('PLEASE_WAIT')} />}
+      <View style={styles.latest}>
+        <Text style={styles.account}>{'Already have an account? '}
+          <Text onPress={onPressSignIn} style={styles.signup}>Sign In</Text>
+        </Text>
+      </View>
     </View>
     </TouchableWithoutFeedback>
   )
@@ -408,12 +308,18 @@ const SignUpScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
 const styles = StyleSheet.create({
   master: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
+  },
+  img: {
+    alignItems: 'center',
+    marginVertical: 40,
   },
   container: {
     justifyContent: 'center',
     alignItems: 'center',
-    flexGrow: 1,
+    // flexGrow: 1,
+    marginTop: 20,
+    backgroundColor: colors.background,
   },
   contentContainer: {
     width: '100%',
@@ -424,16 +330,42 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     margin: 10,
   },
-  date: {
-    alignSelf: 'stretch',
-    marginTop: 10,
-    marginRight: 10,
-    marginBottom: 25,
-    marginLeft: 10,
+  stayConnectedText: {
+    fontSize: 14,
+    fontWeight: '700',
+    lineHeight: 16,
+    color: colors.iconColor,
   },
-  tosText: {
-    fontSize: 12,
+  link: { alignItems: 'center', marginTop: 30, marginBottom: 10 },
+  iconContainer: { alignItems: 'center' },
+  borderIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 44 / 2,
+    borderColor: colors.borderSuccess,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
+  error: {
+    marginTop: 15,
+  },
+  latest: {
+    position: 'absolute',
+    bottom: 40,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  account: {
+    fontSize: 14,
+    color: colors.dark
+  },
+  signup: {
+    color: colors.primary,
+    fontWeight: 'bold'
+  }
 })
 
 export default SignUpScreen
