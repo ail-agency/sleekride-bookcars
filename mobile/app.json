@@ -5,20 +5,18 @@
     "name": "Sleekride",
     "version": "0.0.1",
     "slug": "sleekride",
-    "icon": "./assets/icon.png",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "icon": "./assets/ic_launcher.png",
+    "assetBundlePatterns": ["**/*"],
     "splash": {
-      "backgroundColor": "#f37022",
-      "image": "./assets/splash.png"
+      "backgroundColor": "#105E26",
+      "image": "./assets/ic_launcher.png"
     },
     "android": {
       "versionCode": 590,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png"
+        "foregroundImage": "./assets/ic_launcher.png"
       },
-      "icon": "./assets/icon.png",
+      "icon": "./assets/ic_launcher.png",
       "googleServicesFile": "./google-services.json",
       "softwareKeyboardLayoutMode": "pan",
       "package": "com.bookcars"
@@ -26,8 +24,13 @@
     "ios": {
       "buildNumber": "0.0.1",
       "supportsTablet": true,
-      "icon": "./assets/icon.png",
-      "bundleIdentifier": "com.bookcars"
+      "icon": "./assets/ic_launcher.png",
+      "bundleIdentifier": "com.bookcars",
+      "infoPlist": {
+        "NSAllowsArbitraryLoads": true,
+        "UIBackgroundModes": ["remote-notification"],
+        "NSUserNotificationUsageDescription": "This app needs notifications to send you updates."
+      }
     },
     "plugins": [
       "expo-localization",
@@ -36,7 +39,7 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#f37022",
-          "image": "./assets/icon.png",
+          "image": "./assets/ic_launcher.png",
           "imageWidth": 200
         }
       ],

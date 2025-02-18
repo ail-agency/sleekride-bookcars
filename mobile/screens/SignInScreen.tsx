@@ -21,7 +21,6 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [stayConnected, setStayConnected] = useState(false)
 
   const [emailRequired, setEmailRequired] = useState(false)
   const [emailValid, setEmailValid] = useState(true)
@@ -31,6 +30,7 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
   const [passwordError, setPasswordError] = useState(false)
   const [blacklisted, setBlacklisted] = useState(false)
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const emailRef = useRef<ReactTextInput>(null)
   const passwordRef = useRef<ReactTextInput>(null)
@@ -38,7 +38,6 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
   const clear = () => {
     setEmail('')
     setPassword('')
-    setStayConnected(false)
 
     setEmailRequired(false)
     setEmailValid(true)
@@ -136,16 +135,8 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
     setPasswordError(false)
   }
 
-  // const onChangeStayConnected = (checked: boolean) => {
-  //   setStayConnected(checked)
-  // }
-
   const onPressSignIn = async () => {
-    console.log('onPressSignIn', {
-      email,
-      password
-    })
-
+    setIsLoading(true)
     const _emailValid = await validateEmail()
     if (!_emailValid) {
       return
@@ -159,13 +150,13 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
     const data: bookcarsTypes.SignInPayload = {
       email,
       password,
-      stayConnected,
       mobile: true,
     }
     const res = await UserService.signin(data)
-
+    console.log('res------->', res)
     try {
       if (res.status === 200) {
+        setIsLoading(false)
         if (res.data.blacklisted) {
           await UserService.signout(navigation, false)
           setPasswordError(false)
@@ -179,10 +170,12 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
           navigation.navigate('Home', { d: new Date().getTime() })
         }
       } else {
+        setIsLoading(false)
         setPasswordError(true)
         setBlacklisted(false)
       }
     } catch (err) {
+      setIsLoading(false)
       helper.error(err)
     }
   }
@@ -234,11 +227,13 @@ const SignInScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
             onShowPassword={() => setIsPasswordVisible(!isPasswordVisible)}
           />
 
-          <Pressable style={styles.forgotPwd} onPress={onPressForgotPassword}>
-            <Text style={styles.stayConnectedText}>{i18n.t('FORGOT_PASSWORD')}</Text>
-           </Pressable>
+          <View style={styles.forgotPwd}>
+            <Pressable onPress={onPressForgotPassword}>
+              <Text style={styles.stayConnectedText}>{i18n.t('FORGOT_PASSWORD')}</Text>
+            </Pressable>
+          </View>
 
-          <Button style={styles.component} label={i18n.t('SIGN_IN')} onPress={() => {
+          <Button loading={isLoading} style={styles.component} label={i18n.t('SIGN_IN')} onPress={() => {
             onPressSignIn()
           }} />
 
@@ -292,7 +287,7 @@ const styles = StyleSheet.create({
   forgotPwd: {
     alignItems: 'flex-end',
     marginRight: 10,
-    marginBottom: 10,
+    marginBottom: 10
   },
   stayConnected: {
     alignSelf: 'stretch',

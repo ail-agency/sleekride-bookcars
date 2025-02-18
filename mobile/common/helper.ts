@@ -70,6 +70,15 @@ export const getMimeType = (fileName: string) => mime.getType(fileName)
  * @param {string} userId
  * @returns {void}
  */
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+})
+
 export const registerPushToken = async (userId: string) => {
   const registerForPushNotificationsAsync = async () => {
     let token

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, ScrollView, View, Text } from 'react-native'
+import { StyleSheet, ScrollView, View, Image } from 'react-native'
 import { useIsFocused } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
@@ -47,8 +47,7 @@ const HomeScreen = ({ navigation, route }: NativeStackScreenProps<StackParams, '
 
           <View style={styles.contentContainer}>
             <View style={styles.logo}>
-              <Text style={styles.logoMain}>BookCars</Text>
-              <Text style={styles.logoRegistered}>®</Text>
+              <Image source={require('../assets/sleekride.png')} style={{ width: 169, height: 100, backgroundColor: 'transparent' }} />
             </View>
             <SearchForm
               navigation={navigation}
