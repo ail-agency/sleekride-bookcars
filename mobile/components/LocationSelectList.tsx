@@ -100,7 +100,7 @@ const LocationSelectList = ({
       <Text
         style={{
           display: selectedItem ? 'flex' : 'none',
-          backgroundColor: backgroundColor ?? '#F5F5F5',
+          backgroundColor: backgroundColor ?? 'white',
           color: 'rgba(0, 0, 0, 0.6)',
           fontSize: 12,
           fontWeight: '400',
@@ -157,7 +157,7 @@ const LocationSelectList = ({
           alignSelf: 'center',
         }}
         inputContainerStyle={{
-          backgroundColor: backgroundColor ?? '#F5F5F5',
+          backgroundColor: backgroundColor ?? 'white',
           // color: 'rgba(0, 0, 0, 0.87)',
           borderColor: 'rgba(0, 0, 0, 0.23)',
           borderWidth: 1,
@@ -168,13 +168,14 @@ const LocationSelectList = ({
         }}
         renderItem={(item) => (
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <MaterialIcons name="location-on" size={23} style={{ marginLeft: 5 }} />
+            <MaterialIcons name="location-on" color={'white'} size={23} style={{ marginLeft: 5 }} />
             <Text
               style={{
                 paddingTop: 15,
                 paddingRight: 5,
                 paddingBottom: 15,
                 paddingLeft: 5,
+                color: 'white'
               }}
             >
               {item.title}

@@ -25,6 +25,7 @@ import ChangePasswordScreen from '@/screens/ChangePasswordScreen'
 import DrawerContent from './DrawerContent'
 import CheckoutScreen from '@/screens/CheckoutScreen'
 import NotificationsScreen from '@/screens/NotificationsScreen'
+import CarListScreen from '@/screens/CarListScreen'
 
 const DrawerNavigator = () => {
   const routes = useNavigationState((state) => state && state.routes)
@@ -39,6 +40,12 @@ const DrawerNavigator = () => {
     {
       name: 'Home',
       title: i18n.t('HOME'),
+      iconName: 'home',
+      hideTitle: true,
+    },
+    {
+      name: 'Search',
+      title: i18n.t('Search'),
       iconName: 'home',
       hideTitle: true,
     },
@@ -147,6 +154,7 @@ const DrawerNavigator = () => {
         backBehavior="history"
         screenOptions={{
           drawerActiveTintColor: '#f37022',
+          drawerStatusBarAnimation: 'slide',
           // unmountOnBlur: true,
         }}
         drawerContent={(props) => (
@@ -164,6 +172,28 @@ const DrawerNavigator = () => {
       >
         {drawerItems.map((drawer) => (
           drawer.name === 'Home'
+            ? (
+              <Drawer.Screen
+                key={drawer.name}
+                name={drawer.name}
+                component={CarListScreen}
+                options={{
+                  title: drawer.title,
+                  drawerItemStyle: {
+                    height: drawer.hidden ? 0 : 'auto',
+                  },
+                  drawerIcon: () => (
+                    <MaterialIcons
+                      name={drawer.iconName as keyof typeof MaterialIcons.glyphMap}
+                      size={24}
+                      color="rgba(0, 0, 0, 0.54)"
+                    />
+                  ),
+                  headerShown: false,
+                }}
+              />
+            )
+            : drawer.name === 'Search'
             ? (
               <Drawer.Screen
                 key={drawer.name}

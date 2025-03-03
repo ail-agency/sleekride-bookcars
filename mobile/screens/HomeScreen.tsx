@@ -9,7 +9,7 @@ import * as UserService from '@/services/UserService'
 import Layout from '@/components/Layout'
 import SearchForm from '@/components/SearchForm'
 
-const HomeScreen = ({ navigation, route }: NativeStackScreenProps<StackParams, 'Home'>) => {
+const HomeScreen = ({ navigation, route }: NativeStackScreenProps<StackParams, 'Search'>) => {
   const isFocused = useIsFocused()
 
   const [init, setInit] = useState(false)
@@ -38,9 +38,7 @@ const HomeScreen = ({ navigation, route }: NativeStackScreenProps<StackParams, '
   }
 
   return (
-    <Layout style={styles.master} navigation={navigation} onLoad={onLoad} reload={reload} route={route}>
-      {init && visible && (
-        <ScrollView
+    <ScrollView
           contentContainerStyle={styles.container}
           keyboardShouldPersistTaps={helper.android() ? 'handled' : 'always'}
         >
@@ -55,8 +53,6 @@ const HomeScreen = ({ navigation, route }: NativeStackScreenProps<StackParams, '
           </View>
 
         </ScrollView>
-      )}
-    </Layout>
   )
 }
 

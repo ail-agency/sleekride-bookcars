@@ -366,6 +366,13 @@ const SearchForm = (
           onPress={handleSearch}
         />
 
+        <Button
+          style={styles.button}
+          label={'Go back'}
+          size={size || undefined}
+          onPress={() => navigation.goBack()}
+        />
+
         {!sameLocation && (
           <LocationSelectList
             label={i18n.t('DROP_OFF_LOCATION')}

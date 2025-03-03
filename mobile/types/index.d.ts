@@ -38,6 +38,9 @@ type StackParams = {
   Home: {
     d?: number
   }
+  Search: {
+    d?: number
+  }
   Notifications: {
     d?: number
   }
