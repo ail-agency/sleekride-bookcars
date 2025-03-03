@@ -11,17 +11,14 @@ import {
   Pressable} from 'react-native'
 import { AntDesign, Ionicons, FontAwesome } from '@expo/vector-icons'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { CommonActions, NavigationRoute, RouteProp } from '@react-navigation/native'
-import { useNavigation } from '@react-navigation/native'
+import { RouteProp } from '@react-navigation/native'
 import i18n from '@/lang/i18n'
 import colors from '@/themes/colors'
 import * as helper from '@/common/helper'
 import * as UserService from '@/services/UserService'
 import * as env from '@/config/env.config'
 import * as bookcarsTypes from ':bookcars-types'
-import * as bookcarsHelper from ':bookcars-helper'
 import * as CarService from '@/services/CarService'
-import axiosInstance from '@/services/axiosInstance'
 
 interface CarListProps {
   navigation: NativeStackNavigationProp<StackParams, keyof StackParams>
@@ -53,53 +50,6 @@ interface CarListProps {
   onLoad?: bookcarsTypes.DataEvent<bookcarsTypes.Car>
 }
 
-const data = {
-  recentlyViewed: [
-    {
-      id: '1',
-      image: require('../assets/m4.png'),
-      name: '2021 BMW M4',
-      rating: 4.5,
-      trips: 55,
-      price: '250,000đ / hour',
-    },
-    {
-      id: '2',
-      image: require('../assets/m4.png'),
-      name: '2021 BMW M4',
-      rating: 5.0,
-      trips: 155,
-      price: '450,000đ / hour',
-    },
-    {
-      id: '3',
-      image: require('../assets/m4.png'),
-      name: '2021 BMW M4',
-      rating: 5.0,
-      trips: 155,
-      price: '450,000đ / hour',
-    }
-  ],
-  recommended: [
-    {
-      id: '3',
-      image: require('../assets/m4.png'),
-      name: '2021 BMW M4',
-      rating: 4.5,
-      trips: 55,
-      price: '250,000đ / hour',
-    },
-    {
-      id: '4',
-      image: require('../assets/m4.png'),
-      name: '2021 BMW M4',
-      rating: 4.5,
-      trips: 55,
-      price: '250,000đ / hour',
-    },
-  ],
-}
-
 // eslint-disable-next-line arrow-body-style
 const CarList = ({ title, cars }:any) => {
   return (
@@ -108,10 +58,10 @@ const CarList = ({ title, cars }:any) => {
       <FlatList
         horizontal
         data={cars}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.card}>
-            <Image source={item.image} style={styles.image} />
+            <Image source={{ uri: `${env.CDN_CARS}/${item.image}` }} style={styles.image} />
             <View style={styles.flexView}>
               <View>
                 <Text style={styles.carName}>{item.name}</Text>
@@ -125,7 +75,7 @@ const CarList = ({ title, cars }:any) => {
               </TouchableOpacity>
               </View>
             </View>
-            <Text style={styles.price}>{item.price}</Text>
+            <Text style={styles.price}>{`${item.deposit}$ / day`}</Text>
           </TouchableOpacity>
         )}
       />
@@ -219,7 +169,12 @@ const fetchData = async () => {
           '628a52a7572a010c6b5d1ae3'
        ],
         rating: -1,
-        ranges: [],
+        ranges: [
+          'mini',
+          'midi',
+          'maxi',
+          'scooter'
+       ],
         multimedia: [],
         seats: -1,
         carSpecs: {},
@@ -247,29 +202,26 @@ const fetchData = async () => {
           'FullToEmpty'
         ],
         deposit: -1,
-        includeAlreadyBookedCars,
+        includeComingSoonCars: true,
+        days: 3,
       }
 
-      // const _res = await axiosInstance
-      // .post(
-      //   'https://sleekride.vn/api/frontend-car/1/8',
-      //   payload
-      // )
-      // console.log('🚀 ~ fetchData ~ _res:', _res)
+      const _res = await CarService.getCars(payload, 1, 15)
 
-      // const _data = _res && _res.length > 0 ? _res[0] : { pageInfo: { totalRecord: 0 }, resultData: [] }
-      // if (!_data) {
-      //   helper.error()
-      //   return
-      // }
-      // const totalRecords = Array.isArray(_data.pageInfo) && _data.pageInfo.length > 0 ? _data.pageInfo[0].totalRecords : 0
-      // const _rows = _page === 1 ? _data.resultData : [...rows, ..._data.resultData]
+      const _data = _res && _res.length > 0 ? _res[0] : { pageInfo: { totalRecord: 0 }, resultData: [] }
+      if (!_data) {
+        helper.error()
+        return
+      }
+      const totalRecords = Array.isArray(_data.pageInfo) && _data.pageInfo.length > 0 ? _data.pageInfo[0].totalRecords : 0
+      const _rows = page === 1 ? _data.resultData : [...rows, ..._data.resultData]
 
-      // setRows(_rows)
-      // setFetch(_data.resultData.length === env.CARS_PAGE_SIZE)
-      // if (onLoad) {
-      //   onLoad({ rows: _data.resultData, rowCount: totalRecords })
-      // }
+      setRows(_rows)
+
+      setFetch(_data.resultData.length === env.CARS_PAGE_SIZE)
+      if (onLoad) {
+        onLoad({ rows: _data.resultData, rowCount: totalRecords })
+      }
   } catch (err) {
     helper.error(err)
   } finally {
@@ -299,8 +251,8 @@ useEffect(() => {
           />
         </View>
       </View>
-      <CarList title='Recently Viewed' cars={data.recentlyViewed} />
-      <CarList title='Recommended For You' cars={data.recommended} />
+      <CarList title='Recently Viewed' cars={rows} />
+      <CarList title='Recommended For You' cars={rows} />
       <BottomCarousel />
       <BottomView />
     </View>
@@ -360,7 +312,7 @@ const styles = StyleSheet.create({
   image: { width: '100%', height: 150, borderRadius: 6 },
   carName: { fontSize: 14, fontWeight: '700', marginVertical: 5, lineHeight: 16 },
   rating: { fontSize: 12, color: '#666' },
-  price: { fontSize: 14, fontWeight: '700', color: colors.primary, lineHeight: 16, marginLeft: 5 },
+  price: { fontSize: 14, fontWeight: '700', color: colors.primary, lineHeight: 16, marginTop: 10 },
   bookButton: {
     backgroundColor: colors.primary,
     width: 24,

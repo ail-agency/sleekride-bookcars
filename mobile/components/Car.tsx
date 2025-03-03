@@ -274,6 +274,9 @@ const Car = ({
     },
   })
 
+  console.log(car)
+  
+
   return !loading && days && totalPrice && (
     <View key={car._id} style={styles.carContainer}>
       {pickupLocationName && (
