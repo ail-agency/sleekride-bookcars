@@ -8,7 +8,8 @@ import {
   StyleSheet,
   TextInput,
   ScrollView,
-  Pressable} from 'react-native'
+  Pressable
+} from 'react-native'
 import { AntDesign, Ionicons, FontAwesome } from '@expo/vector-icons'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RouteProp } from '@react-navigation/native'
@@ -19,6 +20,7 @@ import * as UserService from '@/services/UserService'
 import * as env from '@/config/env.config'
 import * as bookcarsTypes from ':bookcars-types'
 import * as CarService from '@/services/CarService'
+import SearchModal from '@/components/SearchModal'
 
 interface CarListProps {
   navigation: NativeStackNavigationProp<StackParams, keyof StackParams>
@@ -140,6 +142,8 @@ const [fetch, setFetch] = useState(false)
 const [rows, setRows] = useState<bookcarsTypes.Car[]>([])
 const [page, setPage] = useState(1)
 const [refreshing, setRefreshing] = useState(false)
+const [modalVisible, setModalVisible] = useState(false)
+const [address, setAddress] = useState('')
 
 useEffect(() => {
   const init = async () => {
@@ -243,11 +247,11 @@ useEffect(() => {
         <View style={styles.searchContainer}>
           <Ionicons name='search-outline' size={20} color='#A0A0A0' style={styles.icon} />
           <TextInput
-            onPress={() => navigation.navigate('Search', {})}
+            onPress={() => setModalVisible(true)}
             style={styles.input}
             placeholderTextColor={'#151525'}
             placeholder='Find your perfect car'
-            value=''
+            value={address}
           />
         </View>
       </View>
@@ -256,6 +260,7 @@ useEffect(() => {
       <BottomCarousel />
       <BottomView />
     </View>
+    <SearchModal isVisible={modalVisible} onClose={() => setModalVisible(false)} onSelect={(data:string) => setAddress(data)} />
     </ScrollView>
   )
 }

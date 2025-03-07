@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { useIsFocused } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { MaterialIcons } from '@expo/vector-icons'
-// import * as Location from 'expo-location'
+import * as Location from 'expo-location'
 import * as bookcarsTypes from ':bookcars-types'
 import * as bookcarsHelper from ':bookcars-helper'
 
@@ -48,7 +48,7 @@ const SearchScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
   const [dropoffLocation, setDropoffLocation] = useState<bookcarsTypes.Location>()
   const [carCount, setCarCount] = useState(0)
   const [fuelPolicy, setFuelPolicy] = useState(bookcarsHelper.getAllFuelPolicies())
-  // const [distance, setDistance] = useState('')
+  const [distance, setDistance] = useState('')
   const [rating, setRating] = useState(-1)
   const [showFilters, setShowFilters] = useState(false)
 
@@ -83,13 +83,13 @@ const SearchScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
     const _pickupLocation = await LocationService.getLocation(route.params.pickupLocation)
     setPickupLocation(_pickupLocation)
 
-    // const { status } = await Location.requestForegroundPermissionsAsync()
-    // if (status !== 'granted') {
-    //   alert('Permission to access location was denied')
-    // }
-    // const location = await Location.getCurrentPositionAsync({})
-    // const d = bookcarsHelper.distance(_pickupLocation.latitude!, _pickupLocation.longitude!, location.coords.latitude, location.coords.longitude, 'K')
-    // setDistance(bookcarsHelper.formatDistance(d, language))
+    const { status } = await Location.requestForegroundPermissionsAsync()
+    if (status !== 'granted') {
+      alert('Permission to access location was denied')
+    }
+    const location = await Location.getCurrentPositionAsync({})
+    const d = bookcarsHelper.distance(_pickupLocation.latitude!, _pickupLocation.longitude!, location.coords.latitude, location.coords.longitude, 'K')
+    setDistance(bookcarsHelper.formatDistance(d, language))
 
     if (route.params.pickupLocation === route.params.dropOffLocation) {
       setDropoffLocation(bookcarsHelper.clone(_pickupLocation))
@@ -198,8 +198,8 @@ const SearchScreen = ({ navigation, route }: NativeStackScreenProps<StackParams,
           deposit={deposit}
           pickupLocation={route.params.pickupLocation}
           dropOffLocation={route.params.dropOffLocation}
-          // pickupLocationName={pickupLocation.name}
-          // distance={distance}
+          pickupLocationName={pickupLocation.name}
+          distance={distance}
           from={new Date(route.params.from)}
           to={new Date(route.params.to)}
           onLoad={(data) => {
