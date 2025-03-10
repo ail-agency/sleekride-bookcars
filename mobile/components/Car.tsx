@@ -129,7 +129,7 @@ const Car = ({
     name: {
       fontSize: 20,
       fontWeight: '700',
-      textAlign: 'center',
+      textAlign: 'left',
     },
     imgView: {
       width: '100%',
@@ -274,15 +274,12 @@ const Car = ({
     },
   })
 
-  console.log(car)
-  
-
   return !loading && days && totalPrice && (
     <View key={car._id} style={styles.carContainer}>
       {pickupLocationName && (
         <>
           <View style={styles.location}>
-            <Entypo style={styles.locationImage} name="location-pin" size={24} color="#212121" />
+            <MaterialIcons style={styles.locationImage} name="location-on" size={24} color="#212121" />
             <Text style={styles.locationText}>{pickupLocationName}</Text>
           </View>
           {distance && (
@@ -295,24 +292,24 @@ const Car = ({
       )}
 
       <View style={styles.car}>
-        <Text style={styles.name}>{car.name}</Text>
-
         <View style={styles.imgView}>
           <Image style={styles.img} source={{ uri: bookcarsHelper.joinURL(env.CDN_CARS, car.image) }} />
         </View>
 
+        <Text style={styles.name}>{car.name}</Text>
+
         <View style={styles.infos}>
-          {car.type !== bookcarsTypes.CarType.Unknown && (
+          {/* {car.type !== bookcarsTypes.CarType.Unknown && (
             <View style={styles.info}>
               <MaterialIcons name="local-gas-station" size={iconSize} color={iconColor} style={styles.infoIcon} />
               <Text style={styles.text}>{helper.getCarTypeShort(car.type)}</Text>
             </View>
-          )}
-          <View style={styles.info}>
+          )} */}
+          {/* <View style={styles.info}>
             <MaterialIcons name="account-tree" size={iconSize} color={iconColor} style={styles.infoIcon} />
             <Text style={styles.text}>{helper.getGearboxTypeShort(car.gearbox)}</Text>
-          </View>
-          {car.seats > 0 && (
+          </View> */}
+          {/* {car.seats > 0 && (
             <View style={styles.info}>
               <MaterialIcons name="person" size={iconSize} color={iconColor} style={styles.infoIcon} />
               <Text style={styles.text}>{car.seats}</Text>
@@ -328,19 +325,19 @@ const Car = ({
             <View style={styles.info}>
               <MaterialIcons name="ac-unit" size={iconSize} color={iconColor} style={styles.infoIcon} />
             </View>
-          )}
+          )} */}
         </View>
 
         {car.mileage !== 0 && (
           <View style={styles.infos}>
-            <MaterialIcons name="directions-car" size={iconSize} color={iconColor} style={styles.infoIcon} />
+            {/* <MaterialIcons name="directions-car" size={iconSize} color={iconColor} style={styles.infoIcon} /> */}
             <Text style={styles.text}>{`${i18n.t('MILEAGE')}${fr ? ' : ' : ': '}${helper.getMileage(car.mileage, language)}`}</Text>
           </View>
         )}
 
         <View style={styles.infos}>
-          <MaterialIcons name="local-gas-station" size={iconSize} color={iconColor} style={styles.infoIcon} />
-          <Text style={styles.text}>{`${i18n.t('FUEL_POLICY')}${fr ? ' : ' : ': '}${helper.getFuelPolicy(car.fuelPolicy)}`}</Text>
+          <MaterialIcons name="location-on" size={iconSize} color={iconColor} style={styles.infoIcon} />
+          <Text style={styles.text}>{`${distance} ${i18n.t('FROM_YOU')}`}</Text>
         </View>
 
         <View style={styles.extras}>

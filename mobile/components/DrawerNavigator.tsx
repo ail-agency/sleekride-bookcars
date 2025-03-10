@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Platform, SafeAreaView, StatusBar, StyleSheet, View } from 'react-native'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import {
   useNavigationState
 } from '@react-navigation/native'
 import { MaterialIcons } from '@expo/vector-icons'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+// import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import HomeScreen from '@/screens/HomeScreen'
 import BookingsScreen from '@/screens/BookingsScreen'
@@ -25,7 +25,6 @@ import ChangePasswordScreen from '@/screens/ChangePasswordScreen'
 import DrawerContent from './DrawerContent'
 import CheckoutScreen from '@/screens/CheckoutScreen'
 import NotificationsScreen from '@/screens/NotificationsScreen'
-import CarListScreen from '@/screens/CarListScreen'
 
 const DrawerNavigator = () => {
   const routes = useNavigationState((state) => state && state.routes)
@@ -34,18 +33,12 @@ const DrawerNavigator = () => {
   const [language, setLanguage] = useState(env.DEFAULT_LANGUAGE)
 
   const Drawer = createDrawerNavigator<StackParams>()
-  const insets = useSafeAreaInsets()
+  // const insets = useSafeAreaInsets()
 
   const drawerItems: DrawerItem[] = [
     {
       name: 'Home',
       title: i18n.t('HOME'),
-      iconName: 'home',
-      hideTitle: true,
-    },
-    {
-      name: 'Search',
-      title: i18n.t('Search'),
       iconName: 'home',
       hideTitle: true,
     },
@@ -141,86 +134,47 @@ const DrawerNavigator = () => {
   }, [routes])
 
   const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      marginTop: insets.top,
+    flex: {
+      flex: 1
     },
+    safe_area: {
+      flex: 1,
+      paddingTop: Platform.OS === 'android' ? 25 : 0
+    }
   })
 
   return (
-    <View style={styles.container}>
-      <Drawer.Navigator
-        initialRouteName="Home"
-        backBehavior="history"
-        screenOptions={{
-          drawerActiveTintColor: '#f37022',
-          drawerStatusBarAnimation: 'slide',
-          // unmountOnBlur: true,
-        }}
-        drawerContent={(props) => (
-          <DrawerContent
-            index={index}
-            drawerItems={drawerItems}
-            loggedIn={loggedIn}
-            language={language}
-            activeBackgroundColor="#feeee4"
-            activeTintColor="#f37022"
-            props={props}
-          />
-        )}
-      // useLegacyImplementation
-      >
-        {drawerItems.map((drawer) => (
-          drawer.name === 'Home'
-            ? (
-              <Drawer.Screen
-                key={drawer.name}
-                name={drawer.name}
-                component={CarListScreen}
-                options={{
-                  title: drawer.title,
-                  drawerItemStyle: {
-                    height: drawer.hidden ? 0 : 'auto',
-                  },
-                  drawerIcon: () => (
-                    <MaterialIcons
-                      name={drawer.iconName as keyof typeof MaterialIcons.glyphMap}
-                      size={24}
-                      color="rgba(0, 0, 0, 0.54)"
-                    />
-                  ),
-                  headerShown: false,
-                }}
-              />
-            )
-            : drawer.name === 'Search'
-            ? (
-              <Drawer.Screen
-                key={drawer.name}
-                name={drawer.name}
-                component={HomeScreen}
-                options={{
-                  title: drawer.title,
-                  drawerItemStyle: {
-                    height: drawer.hidden ? 0 : 'auto',
-                  },
-                  drawerIcon: () => (
-                    <MaterialIcons
-                      name={drawer.iconName as keyof typeof MaterialIcons.glyphMap}
-                      size={24}
-                      color="rgba(0, 0, 0, 0.54)"
-                    />
-                  ),
-                  headerShown: false,
-                }}
-              />
-            )
-            : drawer.name === 'Cars'
+    <View style={styles.flex}>
+      <StatusBar />
+      <SafeAreaView style={styles.safe_area}>
+        <Drawer.Navigator
+          initialRouteName="Home"
+          backBehavior="history"
+          screenOptions={{
+            drawerActiveTintColor: '#f37022',
+            drawerStatusBarAnimation: 'slide',
+            // unmountOnBlur: true,
+          }}
+          drawerContent={(props) => (
+            <DrawerContent
+              index={index}
+              drawerItems={drawerItems}
+              loggedIn={loggedIn}
+              language={language}
+              activeBackgroundColor="#feeee4"
+              activeTintColor="#f37022"
+              props={props}
+            />
+          )}
+        // useLegacyImplementation
+        >
+          {drawerItems.map((drawer) => (
+            drawer.name === 'Home'
               ? (
                 <Drawer.Screen
                   key={drawer.name}
                   name={drawer.name}
-                  component={SearchScreen}
+                  component={HomeScreen}
                   options={{
                     title: drawer.title,
                     drawerItemStyle: {
@@ -237,12 +191,12 @@ const DrawerNavigator = () => {
                   }}
                 />
               )
-              : drawer.name === 'Checkout'
+              : drawer.name === 'Cars'
                 ? (
                   <Drawer.Screen
                     key={drawer.name}
                     name={drawer.name}
-                    component={CheckoutScreen}
+                    component={SearchScreen}
                     options={{
                       title: drawer.title,
                       drawerItemStyle: {
@@ -259,16 +213,16 @@ const DrawerNavigator = () => {
                     }}
                   />
                 )
-                : drawer.name === 'Bookings'
+                : drawer.name === 'Checkout'
                   ? (
                     <Drawer.Screen
                       key={drawer.name}
                       name={drawer.name}
-                      component={BookingsScreen}
+                      component={CheckoutScreen}
                       options={{
                         title: drawer.title,
                         drawerItemStyle: {
-                          height: drawer.hidden || !loggedIn ? 0 : 'auto',
+                          height: drawer.hidden ? 0 : 'auto',
                         },
                         drawerIcon: () => (
                           <MaterialIcons
@@ -281,16 +235,16 @@ const DrawerNavigator = () => {
                       }}
                     />
                   )
-                  : drawer.name === 'Booking'
+                  : drawer.name === 'Bookings'
                     ? (
                       <Drawer.Screen
                         key={drawer.name}
                         name={drawer.name}
-                        component={BookingScreen}
+                        component={BookingsScreen}
                         options={{
                           title: drawer.title,
                           drawerItemStyle: {
-                            height: drawer.hidden ? 0 : 'auto',
+                            height: drawer.hidden || !loggedIn ? 0 : 'auto',
                           },
                           drawerIcon: () => (
                             <MaterialIcons
@@ -303,12 +257,12 @@ const DrawerNavigator = () => {
                         }}
                       />
                     )
-                    : drawer.name === 'About'
+                    : drawer.name === 'Booking'
                       ? (
                         <Drawer.Screen
                           key={drawer.name}
                           name={drawer.name}
-                          component={AboutScreen}
+                          component={BookingScreen}
                           options={{
                             title: drawer.title,
                             drawerItemStyle: {
@@ -325,12 +279,12 @@ const DrawerNavigator = () => {
                           }}
                         />
                       )
-                      : drawer.name === 'ToS'
+                      : drawer.name === 'About'
                         ? (
                           <Drawer.Screen
                             key={drawer.name}
                             name={drawer.name}
-                            component={ToSScreen}
+                            component={AboutScreen}
                             options={{
                               title: drawer.title,
                               drawerItemStyle: {
@@ -347,12 +301,12 @@ const DrawerNavigator = () => {
                             }}
                           />
                         )
-                        : drawer.name === 'Contact'
+                        : drawer.name === 'ToS'
                           ? (
                             <Drawer.Screen
                               key={drawer.name}
                               name={drawer.name}
-                              component={ContactScreen}
+                              component={ToSScreen}
                               options={{
                                 title: drawer.title,
                                 drawerItemStyle: {
@@ -369,16 +323,16 @@ const DrawerNavigator = () => {
                               }}
                             />
                           )
-                          : drawer.name === 'Settings'
+                          : drawer.name === 'Contact'
                             ? (
                               <Drawer.Screen
                                 key={drawer.name}
                                 name={drawer.name}
-                                component={SettingsScreen}
+                                component={ContactScreen}
                                 options={{
                                   title: drawer.title,
                                   drawerItemStyle: {
-                                    height: drawer.hidden || !loggedIn ? 0 : 'auto',
+                                    height: drawer.hidden ? 0 : 'auto',
                                   },
                                   drawerIcon: () => (
                                     <MaterialIcons
@@ -391,16 +345,16 @@ const DrawerNavigator = () => {
                                 }}
                               />
                             )
-                            : drawer.name === 'ChangePassword'
+                            : drawer.name === 'Settings'
                               ? (
                                 <Drawer.Screen
                                   key={drawer.name}
                                   name={drawer.name}
-                                  component={ChangePasswordScreen}
+                                  component={SettingsScreen}
                                   options={{
                                     title: drawer.title,
                                     drawerItemStyle: {
-                                      height: drawer.hidden ? 0 : 'auto',
+                                      height: drawer.hidden || !loggedIn ? 0 : 'auto',
                                     },
                                     drawerIcon: () => (
                                       <MaterialIcons
@@ -413,16 +367,16 @@ const DrawerNavigator = () => {
                                   }}
                                 />
                               )
-                              : drawer.name === 'SignIn'
+                              : drawer.name === 'ChangePassword'
                                 ? (
                                   <Drawer.Screen
                                     key={drawer.name}
                                     name={drawer.name}
-                                    component={SignInScreen}
+                                    component={ChangePasswordScreen}
                                     options={{
                                       title: drawer.title,
                                       drawerItemStyle: {
-                                        height: drawer.hidden || loggedIn ? 0 : 'auto',
+                                        height: drawer.hidden ? 0 : 'auto',
                                       },
                                       drawerIcon: () => (
                                         <MaterialIcons
@@ -435,16 +389,16 @@ const DrawerNavigator = () => {
                                     }}
                                   />
                                 )
-                                : drawer.name === 'SignUp'
+                                : drawer.name === 'SignIn'
                                   ? (
                                     <Drawer.Screen
                                       key={drawer.name}
                                       name={drawer.name}
-                                      component={SignUpScreen}
+                                      component={SignInScreen}
                                       options={{
                                         title: drawer.title,
                                         drawerItemStyle: {
-                                          height: drawer.hidden ? 0 : 'auto',
+                                          height: drawer.hidden || loggedIn ? 0 : 'auto',
                                         },
                                         drawerIcon: () => (
                                           <MaterialIcons
@@ -457,12 +411,12 @@ const DrawerNavigator = () => {
                                       }}
                                     />
                                   )
-                                  : drawer.name === 'ForgotPassword'
+                                  : drawer.name === 'SignUp'
                                     ? (
                                       <Drawer.Screen
                                         key={drawer.name}
                                         name={drawer.name}
-                                        component={ForgotPasswordScreen}
+                                        component={SignUpScreen}
                                         options={{
                                           title: drawer.title,
                                           drawerItemStyle: {
@@ -479,12 +433,12 @@ const DrawerNavigator = () => {
                                         }}
                                       />
                                     )
-                                    : drawer.name === 'Notifications'
+                                    : drawer.name === 'ForgotPassword'
                                       ? (
                                         <Drawer.Screen
                                           key={drawer.name}
                                           name={drawer.name}
-                                          component={NotificationsScreen}
+                                          component={ForgotPasswordScreen}
                                           options={{
                                             title: drawer.title,
                                             drawerItemStyle: {
@@ -501,9 +455,32 @@ const DrawerNavigator = () => {
                                           }}
                                         />
                                       )
-                                      : null
-        ))}
-      </Drawer.Navigator>
+                                      : drawer.name === 'Notifications'
+                                        ? (
+                                          <Drawer.Screen
+                                            key={drawer.name}
+                                            name={drawer.name}
+                                            component={NotificationsScreen}
+                                            options={{
+                                              title: drawer.title,
+                                              drawerItemStyle: {
+                                                height: drawer.hidden ? 0 : 'auto',
+                                              },
+                                              drawerIcon: () => (
+                                                <MaterialIcons
+                                                  name={drawer.iconName as keyof typeof MaterialIcons.glyphMap}
+                                                  size={24}
+                                                  color="rgba(0, 0, 0, 0.54)"
+                                                />
+                                              ),
+                                              headerShown: false,
+                                            }}
+                                          />
+                                        )
+                                        : null
+          ))}
+        </Drawer.Navigator>
+      </SafeAreaView>
     </View>
   )
 }

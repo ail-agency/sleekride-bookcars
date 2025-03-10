@@ -240,28 +240,32 @@ useEffect(() => {
 // const numToRender = Math.floor(env.CARS_PAGE_SIZE / 2)
 
   return (
-    <ScrollView style={{ flex: 1 }}>
-      <View style={styles.container}>
-      <View>
-        <Text style={styles.easy}>{'Easy way to rent a car'}</Text>
-        <View style={styles.searchContainer}>
-          <Ionicons name='search-outline' size={20} color='#A0A0A0' style={styles.icon} />
-          <TextInput
-            onPress={() => setModalVisible(true)}
-            style={styles.input}
-            placeholderTextColor={'#151525'}
-            placeholder='Find your perfect car'
-            value={address}
-          />
+    <>
+      <ScrollView style={{ flex: 1, zIndex: 1 }}>
+        <View style={styles.container}>
+        <View>
+          <Text style={styles.easy}>{'Easy way to rent a car'}</Text>
+          <View style={styles.searchContainer}>
+            <Ionicons name='search-outline' size={20} color='#A0A0A0' style={styles.icon} />
+            <TextInput
+              onPress={() => setModalVisible(true)}
+              style={styles.input}
+              placeholderTextColor={'#151525'}
+              placeholder='Find your perfect car'
+              value={address}
+            />
+          </View>
         </View>
+        <CarList title='Recently Viewed' cars={rows} />
+        <CarList title='Recommended For You' cars={rows} />
+        <BottomCarousel />
+        <BottomView />
       </View>
-      <CarList title='Recently Viewed' cars={rows} />
-      <CarList title='Recommended For You' cars={rows} />
-      <BottomCarousel />
-      <BottomView />
-    </View>
-    <SearchModal isVisible={modalVisible} onClose={() => setModalVisible(false)} onSelect={(data:string) => setAddress(data)} />
-    </ScrollView>
+      </ScrollView>
+      {modalVisible && (
+        <SearchModal navigation={navigation} isVisible={modalVisible} onClose={() => setModalVisible(false)} onSelect={(data:string) => setAddress(data)} />
+      )}
+    </>
   )
 }
 

@@ -82,7 +82,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
       maxWidth: 480,
     },
     label: {
-      backgroundColor: backgroundColor ?? '#F5F5F5',
+      backgroundColor: '#FFF',
       color: 'rgba(0, 0, 0, 0.6)',
       fontSize: 12,
       fontWeight: '400',
@@ -100,7 +100,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
       borderWidth: 1,
       borderRadius: 10,
       borderColor: error ? '#d32f2f' : 'rgba(0, 0, 0, 0.23)',
-      backgroundColor: backgroundColor ?? '#F5F5F5',
+      backgroundColor: '#FFF',
     },
     dateButton: {
       height: 55,

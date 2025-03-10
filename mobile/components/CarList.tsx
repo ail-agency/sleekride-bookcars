@@ -12,6 +12,7 @@ import i18n from '@/lang/i18n'
 import * as UserService from '@/services/UserService'
 import * as CarService from '@/services/CarService'
 import Car from './Car'
+import colors from '@/themes/colors'
 
 interface CarListProps {
   navigation: NativeStackNavigationProp<StackParams, keyof StackParams>
@@ -240,7 +241,7 @@ const CarList = ({
             <View style={styles.container}>
               {
                 footerComponent || (fetch
-                  ? <ActivityIndicator size="large" color="#f37022" style={styles.indicator} />
+                  ? <ActivityIndicator size="large" color={colors.primary} style={styles.indicator} />
                   : <></>)
               }
             </View>
