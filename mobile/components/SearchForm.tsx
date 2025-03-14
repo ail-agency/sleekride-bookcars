@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, TouchableOpacity, Keyboard, Text, FlatList } from 'react-native'
+import { StyleSheet, View, TouchableOpacity, Keyboard, Text, FlatList, TextInput, ActivityIndicator } from 'react-native'
 import { useIsFocused } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { addHours } from 'date-fns'
@@ -9,9 +9,9 @@ import * as env from '@/config/env.config'
 import i18n from '@/lang/i18n'
 import * as UserService from '@/services/UserService'
 import * as helper from '@/common/helper'
-import LocationSelectList from '@/components/LocationSelectList'
 import DateTimePicker from '@/components/DateTimePicker'
 import colors from '@/themes/colors'
+import * as LocationService from '@/services/LocationService'
 
 export interface SearchFormProps {
   navigation: NativeStackNavigationProp<StackParams, keyof StackParams>,
@@ -26,6 +26,11 @@ export interface SearchFormProps {
   backgroundColor?: string
   size?: 'small',
   onClose?: () => void
+}
+
+type IAddress = {
+  id: string,
+  title?: string | null
 }
 
 const SearchForm = (
@@ -47,11 +52,14 @@ const SearchForm = (
 ) => {
   const isFocused = useIsFocused()
 
+  const [search, setSearch] = useState('')
+  const [rows, setRows] = useState<IAddress[]>()
   const [pickupLocationId, setPickupLocationId] = useState(pickupLocation || '')
   const [dropOffLocationId, setDropOffLocationId] = useState(dropOffLocation || '')
   const [sameLocation, setSameLocation] = useState(pickupLocation === dropOffLocation)
   const [closePickupLocation, setClosePickupLocation] = useState(false)
   const [closeDropOffLocation, setCloseDropOffLocation] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const [language, setLanguage] = useState(env.DEFAULT_LANGUAGE)
   const [blur, setBlur] = useState(false)
@@ -251,6 +259,207 @@ const SearchForm = (
     navigation.navigate('Cars', params)
   }
 
+  const onChangeText = async (text: string) => {
+    setSearch(text)
+    await fetchData(text)
+  }
+
+  const fetchData = async (text: string) => {
+      try {
+        setLoading(true)
+        const _response = await LocationService.getLocations(text, 1, env.PAGE_SIZE)
+        const _data = _response && _response.length > 0 ? _response[0] : { pageInfo: { totalRecord: 0 }, resultData: [] }
+        if (!_data) {
+          helper.error()
+          return
+        }
+        const _rows = _data.resultData.map((location) => ({
+          id: location._id,
+          title: location.name || '',
+        }))
+        setRows(_rows)
+      } catch (err) {
+        helper.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+  const DefaultSearch = () => (
+    <FlatList
+            data={rows}
+            style={{ width: '100%', maxWidth: 480, paddingHorizontal: 12 }}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }: any) => (
+                <TouchableOpacity
+                    style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingVertical: 12,
+                    }}
+                    onPress={() => {
+                      handlePickupLocationSelect(item.id)
+                      setSearch(item.title)
+                      setNextStep(true)
+                    } }
+                >
+                    <View style={{ padding: 10, backgroundColor: '#545454', marginRight: 10, borderRadius: 6 }}>
+                      <Ionicons
+                          name={'location-outline'}
+                          size={22}
+                          color={'#fff'}/>
+                    </View>
+                    <View>
+                        <Text style={{ color: '#fff', fontSize: 16, fontWeight: '500' }}>
+                            {item.title}
+                        </Text>
+                    </View>
+                </TouchableOpacity>
+            )} />
+  )
+
+  const SuggestionLocation = () => (
+    <FlatList
+            data={data}
+            style={{ width: '100%', maxWidth: 480, paddingHorizontal: 12 }}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }: any) => (
+                <TouchableOpacity
+                    style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingVertical: 12,
+                    }}
+                    onPress={() => {
+                        if (item.id === '1') {
+                            // setNextStep(true)
+                          //   props.onClose()
+                        } else {
+                            // props.onClose()
+                            // setNextStep(false)
+                        }
+                    } }
+                >
+                    <View style={{ padding: 10, backgroundColor: '#545454', marginRight: 10, borderRadius: 6 }}>
+                      <Ionicons
+                          name={item.icon}
+                          size={22}
+                          color={'#fff'}/>
+                    </View>
+                    <View>
+                        <Text style={{ color: '#fff', fontSize: 16 }}>
+                            {item.label}
+                        </Text>
+                        {item.subLabel && (
+                            <Text style={{ color: '#85868F', fontSize: 13 }}>
+                                {item.subLabel}
+                            </Text>
+                        )}
+                    </View>
+                </TouchableOpacity>
+            )} />
+  )
+
+  // eslint-disable-next-line arrow-body-style
+  const DatePickerComp = () => {
+    return (
+      <>
+        <DateTimePicker
+          mode="date"
+          locale={language}
+          style={styles.component}
+          label={i18n.t('FROM_DATE')}
+          value={fromDate}
+          minDate={fromMinDate}
+          // maxDate={maxDate}
+          hideClearButton
+          size={'small'}
+          onChange={(date) => {
+            if (date) {
+              setMinPickupHoursError(false)
+              setMinRentalHoursError(false)
+              if (date.getTime() > toDate!.getTime()) {
+                const _to = new Date(date)
+                if (env.MIN_RENTAL_HOURS < 24) {
+                  _to.setDate(_to.getDate() + 1)
+                } else {
+                  _to.setDate(_to.getDate() + Math.ceil(env.MIN_RENTAL_HOURS / 24) + 1)
+                }
+                setToDate(_to)
+              }
+
+              let __minDate = new Date(date)
+              __minDate = addHours(__minDate, env.MIN_RENTAL_HOURS)
+              setMinDate(__minDate)
+            } else {
+              let __minDate = new Date()
+              __minDate = addHours(__minDate, env.MIN_RENTAL_HOURS)
+              setMinDate(__minDate)
+            }
+
+            setFromDate(date)
+          } }
+          onPress={blurLocations}
+          backgroundColor={backgroundColor} /><DateTimePicker
+            mode="time"
+            locale={language}
+            style={minPickupHoursError ? styles.timeComponent : styles.component}
+            label={i18n.t('FROM_TIME')}
+            value={fromTime}
+            hideClearButton
+            size={'small'}
+            onChange={(time) => {
+              setMinPickupHoursError(false)
+              setMinRentalHoursError(false)
+
+              setFromTime(time)
+            } }
+            onPress={blurLocations}
+            backgroundColor={backgroundColor}
+            error={minPickupHoursError}
+            helperText={(minPickupHoursError && i18n.t('MIN_PICK_UP_HOURS_ERROR')) || ''} /><DateTimePicker
+            mode="date"
+            locale={language}
+            style={styles.component}
+            label={i18n.t('TO_DATE')}
+            value={toDate}
+            minDate={minDate}
+            hideClearButton
+            size={'small'}
+            onChange={(date) => {
+              if (date) {
+                setMinPickupHoursError(false)
+                setMinRentalHoursError(false)
+
+                setToDate(date)
+              }
+            } }
+            onPress={blurLocations}
+            backgroundColor={backgroundColor} /><DateTimePicker
+            mode="time"
+            locale={language}
+            style={minRentalHoursError ? styles.timeComponent : styles.component}
+            label={i18n.t('TO_TIME')}
+            value={toTime}
+            hideClearButton
+            size={'small'}
+            onChange={(time) => {
+              setMinPickupHoursError(false)
+              setMinRentalHoursError(false)
+
+              setToTime(time)
+            } }
+            onPress={blurLocations}
+            backgroundColor={backgroundColor}
+            error={minRentalHoursError}
+            helperText={(minRentalHoursError && i18n.t('MIN_RENTAL_HOURS_ERROR')) || ''} />
+          <TouchableOpacity onPress={handleSearch} style={{ backgroundColor: colors.primary, padding: 12, borderRadius: 8, marginHorizontal: 12, marginTop: 10 }}>
+            <Text style={{ textAlign: 'center', color: '#FFF', fontSize: 16, fontWeight: 'bold' }}>{'Search'}</Text>
+          </TouchableOpacity>
+        </>
+    )
+  }
+
   return (
     init && visible && (
       <View style={styles.contentContainer}>
@@ -266,171 +475,16 @@ const SearchForm = (
           }}
           onPress={handleTouchableOpacityClick}
         />
-
-        <LocationSelectList
-          label={i18n.t('PICKUP_LOCATION')}
-          style={styles.component}
-          onSelectItem={handlePickupLocationSelect}
-          selectedItem={pickupLocationId}
-          onFetch={() => {
-            setClosePickupLocation(false)
-          }}
-          onFocus={() => {
-            setBlur(false)
-            setCloseDropOffLocation(true)
-          }}
-          close={closePickupLocation}
-          blur={blur}
-          text={pickupLocationText}
-          backgroundColor={backgroundColor}
-          placeholderTextColor="#a3a3a3"
-          size={'small'}
-        />
-
-        {_.isEmpty(pickupLocationId) ? <FlatList
-            data={data}
-            style={{ width: '100%', maxWidth: 480, paddingHorizontal: 12 }}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }: any) => (
-                <TouchableOpacity
-                    style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        paddingVertical: 12,
-                    }}
-                    onPress={() => {
-                        if (item.id === '1') {
-                            setNextStep(true)
-                          //   props.onClose()
-                        } else {
-                            // props.onClose()
-                            setNextStep(false)
-                        }
-                    } }
-                >
-                    <Ionicons
-                        name={item.icon}
-                        size={22}
-                        color={colors.primary}
-                        style={{ marginRight: 15 }} />
-                    <View>
-                        <Text style={{ color: '#010101', fontSize: 16 }}>
-                            {item.label}
-                        </Text>
-                        {item.subLabel && (
-                            <Text style={{ color: '#85868F', fontSize: 13 }}>
-                                {item.subLabel}
-                            </Text>
-                        )}
-                    </View>
-                </TouchableOpacity>
-            )} />
-            : <>
-              <DateTimePicker
-                mode="date"
-                locale={language}
-                style={styles.component}
-                label={i18n.t('FROM_DATE')}
-                value={fromDate}
-                minDate={fromMinDate}
-                // maxDate={maxDate}
-                hideClearButton
-                size={'small'}
-                onChange={(date) => {
-                  if (date) {
-                    setMinPickupHoursError(false)
-                    setMinRentalHoursError(false)
-                    if (date.getTime() > toDate!.getTime()) {
-                      const _to = new Date(date)
-                      if (env.MIN_RENTAL_HOURS < 24) {
-                        _to.setDate(_to.getDate() + 1)
-                      } else {
-                        _to.setDate(_to.getDate() + Math.ceil(env.MIN_RENTAL_HOURS / 24) + 1)
-                      }
-                      setToDate(_to)
-                    }
-
-                    let __minDate = new Date(date)
-                    __minDate = addHours(__minDate, env.MIN_RENTAL_HOURS)
-                    setMinDate(__minDate)
-                  } else {
-                    let __minDate = new Date()
-                    __minDate = addHours(__minDate, env.MIN_RENTAL_HOURS)
-                    setMinDate(__minDate)
-                  }
-
-                  setFromDate(date)
-                }}
-                onPress={blurLocations}
-                backgroundColor={backgroundColor}
-              />
-
-              <DateTimePicker
-                mode="time"
-                locale={language}
-                style={minPickupHoursError ? styles.timeComponent : styles.component}
-                label={i18n.t('FROM_TIME')}
-                value={fromTime}
-                hideClearButton
-                size={'small'}
-                onChange={(time) => {
-                  setMinPickupHoursError(false)
-                  setMinRentalHoursError(false)
-
-                  setFromTime(time)
-                }}
-                onPress={blurLocations}
-                backgroundColor={backgroundColor}
-                error={minPickupHoursError}
-                helperText={(minPickupHoursError && i18n.t('MIN_PICK_UP_HOURS_ERROR')) || ''}
-              />
-
-              <DateTimePicker
-                mode="date"
-                locale={language}
-                style={styles.component}
-                label={i18n.t('TO_DATE')}
-                value={toDate}
-                minDate={minDate}
-                hideClearButton
-                size={'small'}
-                onChange={(date) => {
-                  if (date) {
-                    setMinPickupHoursError(false)
-                    setMinRentalHoursError(false)
-
-                    setToDate(date)
-                  }
-                }}
-                onPress={blurLocations}
-                backgroundColor={backgroundColor}
-              />
-
-              <DateTimePicker
-                mode="time"
-                locale={language}
-                style={minRentalHoursError ? styles.timeComponent : styles.component}
-                label={i18n.t('TO_TIME')}
-                value={toTime}
-                hideClearButton
-                size={'small'}
-                onChange={(time) => {
-                  setMinPickupHoursError(false)
-                  setMinRentalHoursError(false)
-
-                  setToTime(time)
-                }}
-                onPress={blurLocations}
-                backgroundColor={backgroundColor}
-                error={minRentalHoursError}
-                helperText={(minRentalHoursError && i18n.t('MIN_RENTAL_HOURS_ERROR')) || ''}
-              />
-
-              <TouchableOpacity onPress={handleSearch} style={{ backgroundColor: colors.primary, padding: 12, borderRadius: 8, width: '95%' }}>
-                <Text style={{ textAlign: 'center', color: '#FFF', fontSize: 16, fontWeight: 'bold' }}>{'Search'}</Text>
-              </TouchableOpacity>
-            </>
-          }
+        <View style={styles.searchContainer}>
+          <TextInput
+            onChangeText={(text:string) => onChangeText(text)}
+            style={styles.input}
+            placeholderTextColor={'707071'}
+            placeholder='City, airport, address or train station'
+            value={search}
+          />
+        </View>
+        {(_.isEmpty(search) && _.isEmpty(rows) && _.isEmpty(pickupLocationId)) ? <SuggestionLocation/> : (!_.isEmpty(pickupLocationId) && !!nextStep) ? <DatePickerComp /> : <DefaultSearch />}
       </View>
     )
   )
@@ -447,10 +501,28 @@ const styles = StyleSheet.create({
   //   paddingTop: 20,
   //   paddingBottom: 10,
   // },
+  searchContainer: {
+    backgroundColor: colors.bgInput,
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: colors.borderInput,
+    marginHorizontal: 12,
+    marginVertical: 20
+  },
+  input: {
+    fontWeight: '400',
+    fontSize: 14,
+    lineHeight: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    color: '#fff'
+  },
+  icon: {
+    marginRight: 10,
+  },
   contentContainer: {
     width: '100%',
     maxWidth: 480,
-    alignItems: 'center',
   },
   component: {
     alignSelf: 'stretch',

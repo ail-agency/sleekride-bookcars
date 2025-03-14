@@ -168,14 +168,13 @@ const LocationSelectList = ({
         }}
         renderItem={(item) => (
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <MaterialIcons name="location-on" color={'white'} size={23} style={{ marginLeft: 5 }} />
+            <MaterialIcons name="location-on" color={'white'} size={23} style={{ marginRight: 5 }} />
             <Text
               style={{
-                paddingTop: 15,
-                paddingRight: 5,
-                paddingBottom: 15,
+                paddingVertical: 15,
                 paddingLeft: 5,
-                color: 'white'
+                color: 'white',
+                fontSize: 16
               }}
             >
               {item.title}

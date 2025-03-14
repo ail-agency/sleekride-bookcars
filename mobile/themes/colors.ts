@@ -1,5 +1,8 @@
 const colors = {
-    primary: 'rgba(16, 94, 38, 1)',
+    primary: '#675cfe',
+    headerBg: '#121114',
+    bgInput: '#545454',
+    borderInput: '#707071',
     secondary: '#999',
     iconColor: 'rgba(106, 112, 124, 1)',
     placeholderColor: 'rgba(131, 145, 161, 1)',

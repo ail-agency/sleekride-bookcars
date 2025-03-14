@@ -145,9 +145,7 @@ const DrawerNavigator = () => {
 
   return (
     <View style={styles.flex}>
-      <StatusBar />
-      <SafeAreaView style={styles.safe_area}>
-        <Drawer.Navigator
+      <Drawer.Navigator
           initialRouteName="Home"
           backBehavior="history"
           screenOptions={{
@@ -191,28 +189,6 @@ const DrawerNavigator = () => {
                   }}
                 />
               )
-              : drawer.name === 'Cars'
-                ? (
-                  <Drawer.Screen
-                    key={drawer.name}
-                    name={drawer.name}
-                    component={SearchScreen}
-                    options={{
-                      title: drawer.title,
-                      drawerItemStyle: {
-                        height: drawer.hidden ? 0 : 'auto',
-                      },
-                      drawerIcon: () => (
-                        <MaterialIcons
-                          name={drawer.iconName as keyof typeof MaterialIcons.glyphMap}
-                          size={24}
-                          color="rgba(0, 0, 0, 0.54)"
-                        />
-                      ),
-                      headerShown: false,
-                    }}
-                  />
-                )
                 : drawer.name === 'Checkout'
                   ? (
                     <Drawer.Screen
@@ -480,7 +456,6 @@ const DrawerNavigator = () => {
                                         : null
           ))}
         </Drawer.Navigator>
-      </SafeAreaView>
     </View>
   )
 }

@@ -263,7 +263,7 @@ useEffect(() => {
       </View>
       </ScrollView>
       {modalVisible && (
-        <SearchModal navigation={navigation} isVisible={modalVisible} onClose={() => setModalVisible(false)} onSelect={(data:string) => setAddress(data)} />
+        <SearchModal navigation={navigation} isVisible={modalVisible} onClose={() => setModalVisible(false)} />
       )}
     </>
   )

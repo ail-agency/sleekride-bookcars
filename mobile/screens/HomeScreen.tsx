@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   View,
   Text,
@@ -8,7 +8,10 @@ import {
   StyleSheet,
   TextInput,
   ScrollView,
-  Pressable
+  Pressable,
+  Dimensions,
+  Platform,
+  Animated
 } from 'react-native'
 import { AntDesign, Ionicons, FontAwesome } from '@expo/vector-icons'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -21,6 +24,7 @@ import * as env from '@/config/env.config'
 import * as bookcarsTypes from ':bookcars-types'
 import * as CarService from '@/services/CarService'
 import SearchModal from '@/components/SearchModal'
+import { getHeaderHeight, getSize } from '@/utils/scale'
 
 interface CarListProps {
   navigation: NativeStackNavigationProp<StackParams, keyof StackParams>
@@ -50,39 +54,6 @@ interface CarListProps {
   includeAlreadyBookedCars?: boolean
   includeComingSoonCars?: boolean
   onLoad?: bookcarsTypes.DataEvent<bookcarsTypes.Car>
-}
-
-// eslint-disable-next-line arrow-body-style
-const CarList = ({ title, cars }:any) => {
-  return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <FlatList
-        horizontal
-        data={cars}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.card}>
-            <Image source={{ uri: `${env.CDN_CARS}/${item.image}` }} style={styles.image} />
-            <View style={styles.flexView}>
-              <View>
-                <Text style={styles.carName}>{item.name}</Text>
-                <Text style={styles.rating}>
-                  {item.rating} <FontAwesome name='star' color={colors.primary} size={10} /> ({item.trips} trips)
-                </Text>
-              </View>
-              <View style={{ justifyContent: 'center' }}>
-              <TouchableOpacity style={styles.bookButton}>
-                <AntDesign name='arrowright' color='#fff' size={16} />
-              </TouchableOpacity>
-              </View>
-            </View>
-            <Text style={styles.price}>{`${item.deposit}$ / day`}</Text>
-          </TouchableOpacity>
-        )}
-      />
-    </View>
-  )
 }
 
 const BottomCarousel = () => (
@@ -239,9 +210,15 @@ useEffect(() => {
 
 // const numToRender = Math.floor(env.CARS_PAGE_SIZE / 2)
 
+const Header = () => (
+  <View style={[styles.header, { height: getHeaderHeight() }]}>
+  </View>
+)
+
   return (
-    <>
-      <ScrollView style={{ flex: 1, zIndex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: '#121214' }}>
+      <Header/>
+      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, zIndex: 1 }}>
         <View style={styles.container}>
         <View>
           <Text style={styles.easy}>{'Easy way to rent a car'}</Text>
@@ -252,8 +229,35 @@ useEffect(() => {
               >{'Find your perfect car'}</Text>
             </Pressable>
         </View>
-        <CarList title='Recently Viewed' cars={rows} />
-        <CarList title='Recommended For You' cars={rows} />
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{'Recently Viewed'}</Text>
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={rows}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => (
+              <TouchableOpacity style={styles.card}>
+                {/* <Image source={{ uri: `${env.CDN_CARS}/${item.image}` }} style={styles.image} /> */}
+                <Image source={require('../assets/m4.png')} style={styles.image} />
+                <View style={styles.flexView}>
+                  <View>
+                    <Text style={styles.carName}>{item.name}</Text>
+                    <Text style={styles.rating}>
+                      {item.rating} <FontAwesome name='star' color={'#675cfe'} size={10} /> ({item.trips} trips)
+                    </Text>
+                  </View>
+                  <View style={{ justifyContent: 'center' }}>
+                  <TouchableOpacity style={styles.bookButton}>
+                    <AntDesign name='arrowright' color='#fff' size={16} />
+                  </TouchableOpacity>
+                  </View>
+                </View>
+                <Text style={styles.price}>{`${item.deposit}$ / day`}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
         <BottomCarousel />
         <BottomView />
       </View>
@@ -261,40 +265,48 @@ useEffect(() => {
       {modalVisible && (
         <SearchModal navigation={navigation} isVisible={modalVisible} onClose={() => setModalVisible(false)}/>
       )}
-    </>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F5F5', padding: 10 },
+  header: {
+    width: '100%',
+    backgroundColor: '#121114',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: Platform.OS === 'ios' ? 25 : 0
+  },
+  container: { flex: 1, backgroundColor: '#121114', padding: 10 },
   section: { marginBottom: 20 },
-  sectionTitle: { fontSize: 16, fontWeight: '700', marginBottom: 10, lineHeight: 18 },
+  sectionTitle: { fontSize: 16, fontWeight: '700', marginBottom: 10, lineHeight: 18, color: '#fff' },
   input: {
     fontWeight: '400',
-    fontSize: 12,
-    lineHeight: 14,
-    color: '#151525'
+    fontSize: 14,
+    lineHeight: 16,
+    color: '#fff',
+    paddingHorizontal: 14,
+    paddingVertical: 14
   },
   easy: {
     fontSize: 20,
     fontWeight: '700',
     lineHeight: 23,
-    color: '#151525'
+    color: '#fff'
   },
-  title: { fontSize: 16, fontWeight: '700', lineHeight: 18, color: 'rgba(21, 21, 37, 1)' },
-  subTitle: { fontSize: 12, fontWeight: '400', lineHeight: 14, color: 'rgba(133, 134, 143, 1)', textAlign: 'center', marginTop: 10, marginBottom: 20 },
+  title: { fontSize: 16, fontWeight: '700', lineHeight: 18, color: '#fff' },
+  subTitle: { fontSize: 12, fontWeight: '400', lineHeight: 14, color: '#fff', textAlign: 'center', marginTop: 10, marginBottom: 20 },
   alignView: { alignItems: 'center', marginVertical: 20 },
-  btnExplore: { paddingVertical: 16, backgroundColor: colors.primary, alignItems: 'center', marginHorizontal: 25, borderRadius: 8 },
+  btnExplore: { paddingVertical: 16, backgroundColor: '#675cfe', alignItems: 'center', marginHorizontal: 25, borderRadius: 8 },
   txtExplore: { fontSize: 15, fontWeight: '700', lineHeight: 17, color: colors.white },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.bgInput,
     borderRadius: 25,
     borderWidth: 1,
-    borderColor: '#F1F1F1',
+    borderColor: colors.borderInput,
     paddingHorizontal: 15,
-    paddingVertical: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -302,25 +314,25 @@ const styles = StyleSheet.create({
     elevation: 3,
     marginVertical: 20
   },
-  flexView: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
+  flexView: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, paddingHorizontal: 10 },
   icon: {
-    marginRight: 10,
+    // marginRight: 10,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(30,29,30,255)',
     borderRadius: 10,
-    padding: 10,
     marginRight: 10,
-    width: 280,
-    borderColor: '#F1F1F1',
+    width: getSize.s(320),
+    height: getSize.v(260),
+    borderColor: '#3e3f41',
     borderWidth: 1
   },
-  image: { width: '100%', height: 150, borderRadius: 6 },
-  carName: { fontSize: 14, fontWeight: '700', marginVertical: 5, lineHeight: 16 },
-  rating: { fontSize: 12, color: '#666' },
-  price: { fontSize: 14, fontWeight: '700', color: colors.primary, lineHeight: 16, marginTop: 10 },
+  image: { width: '100%', height: 200, borderTopLeftRadius: 6, borderTopRightRadius: 6, resizeMode: 'cover' },
+  carName: { fontSize: 14, fontWeight: '700', marginVertical: 5, lineHeight: 16, color: '#fff' },
+  rating: { fontSize: 12, color: '#fff' },
+  price: { fontSize: 14, fontWeight: '700', color: '#fff', lineHeight: 16, marginTop: 10, paddingHorizontal: 10, textAlign: 'right' },
   bookButton: {
-    backgroundColor: colors.primary,
+    backgroundColor: '#675cfe',
     width: 24,
     height: 24,
     borderRadius: 12,

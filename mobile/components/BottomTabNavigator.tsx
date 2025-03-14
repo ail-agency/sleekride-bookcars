@@ -1,21 +1,17 @@
-import 'react-native-gesture-handler'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native'
-import { StatusBar as ExpoStatusBar } from 'expo-status-bar'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { Provider } from 'react-native-paper'
-import * as SplashScreen from 'expo-splash-screen'
+import { Dimensions } from 'react-native'
 import * as Notifications from 'expo-notifications'
-import { StripeProvider } from '@stripe/stripe-react-native'
-import Toast from 'react-native-toast-message'
-import DrawerNavigator from './components/DrawerNavigator'
-import BottomTabNavigator from './components/BottomTabNavigator'
-import * as helper from './common/helper'
-import * as NotificationService from './services/NotificationService'
-import * as UserService from './services/UserService'
-import { GlobalProvider } from './context/GlobalContext'
-import * as env from './config/env.config'
-import { AutocompleteDropdownContextProvider } from '@/components/AutocompleteDropdown-v4.3.1'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native'
+import { Ionicons } from '@expo/vector-icons'
+import { createStackNavigator } from '@react-navigation/stack'
+import * as SplashScreen from 'expo-splash-screen'
+import * as helper from '../common/helper'
+import * as NotificationService from '../services/NotificationService'
+import * as UserService from '../services/UserService'
+import HomeScreen from '@/screens/HomeScreen'
+import AboutScreen from '@/screens/AboutScreen'
+import SearchScreen from '@/screens/SearchScreen'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -25,18 +21,20 @@ Notifications.setNotificationHandler({
   }),
 })
 
-//
-// Keep the splash screen visible while we fetch resources
-//
-SplashScreen.preventAutoHideAsync()
+const { height } = Dimensions.get('window')
 
-const App = () => {
+// Bottom Tab Navigation
+const Tab = createBottomTabNavigator()
+const Stack = createStackNavigator()
+
+// eslint-disable-next-line arrow-body-style
+const BottomTabNavigator = () => {
   const [appIsReady, setAppIsReady] = useState(false)
 
   const responseListener = useRef<Notifications.EventSubscription>()
   const navigationRef = useRef<NavigationContainerRef<StackParams>>(null)
 
-  useEffect(() => {
+useEffect(() => {
     const register = async () => {
       const loggedIn = await UserService.loggedIn()
       if (loggedIn) {
@@ -81,10 +79,6 @@ const App = () => {
     }
   }, [])
 
-  setTimeout(() => {
-    setAppIsReady(true)
-  }, 500)
-
   const onReady = useCallback(async () => {
     if (appIsReady) {
       //
@@ -98,26 +92,44 @@ const App = () => {
     }
   }, [appIsReady])
 
+  setTimeout(() => {
+    setAppIsReady(true)
+  }, 500)
+
   if (!appIsReady) {
     return null
   }
 
-  return (
-    <GlobalProvider>
-      <SafeAreaProvider>
-        <Provider>
-          <StripeProvider publishableKey={env.STRIPE_PUBLISHABLE_KEY} merchantIdentifier={env.STRIPE_MERCHANT_IDENTIFIER}>
-            <AutocompleteDropdownContextProvider>
-                <ExpoStatusBar style="light"/>
-                {/* <DrawerNavigator /> */}
-                <BottomTabNavigator />
-                <Toast />
-            </AutocompleteDropdownContextProvider>
-          </StripeProvider>
-        </Provider>
-      </SafeAreaProvider>
-    </GlobalProvider>
+  const BottomTab = () => (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName
+          if (route.name === 'Home') iconName = 'home-outline'
+          else if (route.name === 'Settings') iconName = 'settings-outline'
+          return <Ionicons name={iconName} size={size} color={color} />
+        },
+        tabBarStyle: { backgroundColor: '#121214', height: height * 0.07 }, // Footer Height
+        tabBarActiveTintColor: '#665cff',
+        tabBarInactiveTintColor: '#c3c5c5',
+        headerShown: false
+      })}
+    >
+      <Tab.Screen name='Home' component={HomeScreen} />
+      <Tab.Screen name='About' component={AboutScreen} />
+    </Tab.Navigator>
   )
+
+  return (
+    <NavigationContainer ref={navigationRef} onReady={onReady}>
+      <Stack.Navigator screenOptions={{
+        headerShown: false
+      }}>
+        <Stack.Screen name='MainTabs' component={BottomTab} />
+        <Stack.Screen name="Cars" component={SearchScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+)
 }
 
-export default App
+export default BottomTabNavigator

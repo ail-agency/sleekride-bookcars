@@ -8,7 +8,7 @@ import * as UserService from '@/services/UserService'
 import Button from './Button'
 import i18n from '@/lang/i18n'
 import * as helper from '@/common/helper'
-import Header from './Header'
+import Header from './HeaderBar'
 // import { AutocompleteDropdownContextProvider } from './AutocompleteDropdown-v4.3.1'
 
 interface LayoutProps {
@@ -133,7 +133,7 @@ const Layout = ({
 
   return (
     <View style={{ ...styles.container, ...style }}>
-      <Header route={route} title={title} hideTitle={hideTitle} loggedIn={loggedIn} reload={reload} _avatar={avatar} />
+      <Header/>
       {(!loading
         && ((!user && !strict) || (user && user.verified) ? (
           children

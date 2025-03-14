@@ -6,6 +6,7 @@ import { format } from 'date-fns'
 import { enUS, fr, es } from 'date-fns/locale'
 import { MaterialIcons } from '@expo/vector-icons'
 import * as bookcarsHelper from ':bookcars-helper'
+import colors from '@/themes/colors'
 
 interface DateTimePickerProps {
   value?: Date
@@ -82,8 +83,8 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
       maxWidth: 480,
     },
     label: {
-      backgroundColor: '#FFF',
-      color: 'rgba(0, 0, 0, 0.6)',
+      backgroundColor: '#1e1e1f',
+      color: '#fff',
       fontSize: 12,
       fontWeight: '400',
       paddingRight: 5,
@@ -95,24 +96,22 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
     },
     dateContainer: {
       alignSelf: 'stretch',
-      height: small ? 37 : 55,
-      fontSize: small ? 14 : 16,
+      paddingVertical: 10,
       borderWidth: 1,
       borderRadius: 10,
-      borderColor: error ? '#d32f2f' : 'rgba(0, 0, 0, 0.23)',
-      backgroundColor: '#FFF',
+      borderColor: colors.borderInput,
+      backgroundColor: '#1e1e1f',
     },
     dateButton: {
-      height: 55,
       alignSelf: 'stretch',
       flexDirection: 'row',
     },
     dateText: {
       flex: 1,
-      fontSize: small ? 14 : 16,
-      paddingTop: small ? 8 : 15,
+      fontSize: 14,
+      lineHeight: 16,
+      paddingVertical: 8,
       paddingRight: 15,
-      paddingBottom: small ? 8 : 15,
       paddingLeft: 15,
     },
     helperText: {
@@ -141,7 +140,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
             onPress?.()
           }}
         >
-          <Text style={[styles.dateText, { color: selectedDate ? 'rgba(0, 0, 0, 0.87)' : '#a3a3a3' }]}>
+          <Text style={[styles.dateText, { color: selectedDate ? '#fff' : '#fff' }]}>
             {formattedLabel}
           </Text>
 

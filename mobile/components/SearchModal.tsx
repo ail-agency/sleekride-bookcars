@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons'
 import * as Location from 'expo-location'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import SearchForm from './SearchForm'
+import { getHeaderHeight } from '@/utils/scale'
 
 type Props = {
     navigation: NativeStackNavigationProp<StackParams, keyof StackParams>
@@ -103,9 +104,14 @@ const SearchModal = (props:Props) => {
     return null
   }
 
+  const Header = () => (
+    <View style={[styles.headerContainer, { height: getHeaderHeight() }]}>
+    </View>
+  )
+
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <Header />
       <Animated.View
         style={[
           styles.backdrop,
@@ -133,14 +139,9 @@ const SearchModal = (props:Props) => {
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
             style={styles.content}
           >
-            <View style={styles.header}>
-              <Pressable
-                style={styles.backButton}
-                onPress={props.onClose}
-              >
-                <Ionicons name='arrow-back' color={'#000'} size={18} />
-              </Pressable>
-            </View>
+            <Pressable onPress={props.onClose} style={styles.header}>
+                <Ionicons name='arrow-back' color={'#fff'} size={20} />
+            </Pressable>
             <SearchForm navigation={props.navigation} />
           </KeyboardAvoidingView>
         </SafeAreaView>
@@ -150,6 +151,13 @@ const SearchModal = (props:Props) => {
 }
 
 const styles = StyleSheet.create({
+  headerContainer: {
+    width: '100%',
+    backgroundColor: '#121114',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: Platform.OS === 'ios' ? 25 : 0
+  },
   container: {
     position: 'absolute',
     top: 0,
@@ -158,7 +166,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     width,
     height,
-    zIndex: 1000,
+    zIndex: 1000
   },
   backdrop: {
     position: 'absolute',
@@ -177,7 +185,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     top: 0,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1e1e1f',
     // borderTopLeftRadius: 15,
     // borderTopRightRadius: 15,
     zIndex: 1001,
@@ -190,9 +198,10 @@ const styles = StyleSheet.create({
     marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
-    paddingHorizontal: 10,
-    marginBottom: 12,
+    paddingHorizontal: 12,
     marginTop: 10,
+    width: 50,
+    height: 25
   },
   backButton: {
     backgroundColor: '#E1E1E1',

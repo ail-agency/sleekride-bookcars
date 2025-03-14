@@ -26,6 +26,7 @@ import CarSpecsFilter from '@/components/CarSpecsFilter'
 import SearchFormFilter from '@/components/SearchFormFilter'
 import CarRatingFilter from '@/components/CarRatingFilter'
 import Indicator from '@/components/Indicator'
+import colors from '@/themes/colors'
 
 const SearchScreen = ({ navigation, route }: NativeStackScreenProps<StackParams, 'Cars'>) => {
   const isFocused = useIsFocused()
@@ -290,28 +291,25 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 18,
+    color: colors.white
   },
   titleBookCars: {
-    color: '#212121',
+    color: colors.primary,
     fontSize: 18,
     fontWeight: '600',
   },
   carCount: {
-    color: '#717171',
+    color: colors.white,
     marginTop: 3,
   },
   shwoFiltersBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f37022',
-    // borderColor: '#d9d8d9',
-    borderColor: '#f37022',
+    backgroundColor: colors.primary,
     borderRadius: 4,
-    borderWidth: 1,
-    marginRight: 7,
+    marginHorizontal: 7,
     marginBottom: 10,
-    marginLeft: 7,
     paddingVertical: 5,
   },
   shwoFiltersIcon: {

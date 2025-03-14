@@ -31,7 +31,7 @@ export const Dropdown = memo((props: DropdownProps) => {
 
   return (
     <Animatable.View
-      // useNativeDriver
+      useNativeDriver
       animation={direction === 'up' ? fadeInUpShort : fadeInDownShort}
       easing="ease-out-quad"
       delay={direction === 'up' ? 150 : 0}
@@ -62,8 +62,7 @@ const getStyles = (themeName: 'light' | 'dark' = 'light') =>
     listContainer: {
       backgroundColor: theme[themeName].suggestionsListBackgroundColor,
       width: '100%',
-      zIndex: 9999,
-      position: 'absolute',
+      zIndex: 9,
       borderRadius: 5,
       shadowColor: theme[themeName || 'light'].shadowColor,
       shadowOffset: {
@@ -72,7 +71,8 @@ const getStyles = (themeName: 'light' | 'dark' = 'light') =>
       },
       shadowOpacity: 0.3,
       shadowRadius: 15.46,
-      elevation: 9999,
+
+      elevation: 20,
     },
     itemSeparator: {
       height: 1,

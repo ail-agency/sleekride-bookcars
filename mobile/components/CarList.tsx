@@ -195,14 +195,11 @@ const CarList = ({
     <View style={styles.container}>
       {((from && to && pickupLocation && dropOffLocation) || hidePrice) && (
         <KeyboardAwareFlatList
-
           automaticallyAdjustKeyboardInsets
           keyboardShouldPersistTaps={helper.android() ? 'handled' : 'always'}
-
           extraHeight={20}
           extraScrollHeight={20}
           enableOnAndroid
-
           initialNumToRender={numToRender}
           maxToRenderPerBatch={numToRender}
           removeClippedSubviews
@@ -346,6 +343,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: colors.headerBg
   },
   contentContainer: {
     alignSelf: 'stretch',
