@@ -20,7 +20,10 @@
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
-    "plugin:react-hooks/recommended"
+    "plugin:react-hooks/recommended",
+    "prettier",
+    "react",
+    "react-native"
   ],
   "ignorePatterns": [
     "/**/*.js"
@@ -43,6 +46,7 @@
     "no-alert": "off",
     "global-require": "off",
     "func-names": "off",
+    "prettier/prettier": ["error"],
     "no-nested-ternary": "off",
     "object-curly-newline": "off",
     "semi": [

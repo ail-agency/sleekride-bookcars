@@ -120,19 +120,19 @@ const Car = ({
     car: {
       width: '100%',
       maxWidth: 480,
-      backgroundColor: '#fff',
-      paddingTop: 20,
-      paddingRight: 10,
-      paddingBottom: 20,
-      paddingLeft: 10,
+      backgroundColor: '#1e1e1f',
+      paddingVertical: 20,
+      paddingHorizontal: 10,
       borderWidth: 1,
-      borderColor: '#d9d8d9',
-      borderRadius: 5,
+      borderColor: '#474646',
+      borderRadius: 12,
     },
     name: {
       fontSize: 20,
       fontWeight: '700',
       textAlign: 'center',
+      color: colors.white,
+      marginBottom: 10,
     },
     imgView: {
       width: '100%',
@@ -149,14 +149,14 @@ const Car = ({
     infos: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 10,
+      marginVertical: 10
     },
     info: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
       borderWidth: 1,
-      borderColor: '#ddd',
+      borderColor: '#474646',
       borderRadius: 4,
       width: 60,
       padding: 2,
@@ -166,7 +166,7 @@ const Car = ({
       marginRight: 4,
     },
     text: {
-      color: '#333',
+      color: colors.white,
       fontSize: 12,
     },
     extras: {
@@ -220,6 +220,7 @@ const Car = ({
     },
     ratingText: {
       fontWeight: '600',
+      color: colors.white
     },
     ratingImage: {
       width: 16,
@@ -229,7 +230,7 @@ const Car = ({
     },
     tripsText: {
       fontSize: 11,
-      color: '#A2A2A2',
+      color: colors.white,
     },
     co2: {
       display: 'flex',
@@ -240,6 +241,7 @@ const Car = ({
     co2Text: {
       fontSize: 11,
       fontWeight: '600',
+      color: colors.green
     },
     co2Image: {
       width: 17,
@@ -256,12 +258,12 @@ const Car = ({
     pricePrimary: {
       fontSize: 22,
       fontWeight: '700',
-      color: '#383838',
+      color: colors.white,
       lineHeight: 28,
     },
     priceSecondary: {
       fontSize: 13,
-      color: '#a1a1a1',
+      color: colors.primary,
     },
     carInfo: {
       fontSize: 13,
@@ -305,17 +307,17 @@ const Car = ({
         <View style={styles.infos}>
           {car.type !== bookcarsTypes.CarType.Unknown && (
             <View style={styles.info}>
-              <MaterialIcons name="local-gas-station" size={iconSize} color={iconColor} style={styles.infoIcon} />
+              <MaterialIcons name="local-gas-station" size={iconSize} color={colors.white} style={styles.infoIcon} />
               <Text style={styles.text}>{helper.getCarTypeShort(car.type)}</Text>
             </View>
           )}
           <View style={styles.info}>
-            <MaterialIcons name="account-tree" size={iconSize} color={iconColor} style={styles.infoIcon} />
+            <MaterialIcons name="account-tree" size={iconSize} color={colors.white} style={styles.infoIcon} />
             <Text style={styles.text}>{helper.getGearboxTypeShort(car.gearbox)}</Text>
           </View>
           {car.seats > 0 && (
             <View style={styles.info}>
-              <MaterialIcons name="person" size={iconSize} color={iconColor} style={styles.infoIcon} />
+              <MaterialIcons name="person" size={iconSize} color={colors.white} style={styles.infoIcon} />
               <Text style={styles.text}>{car.seats}</Text>
             </View>
           )}
@@ -327,20 +329,20 @@ const Car = ({
           )}
           {car.aircon && (
             <View style={styles.info}>
-              <MaterialIcons name="ac-unit" size={iconSize} color={iconColor} style={styles.infoIcon} />
+              <MaterialIcons name="ac-unit" size={iconSize} color={colors.white} style={styles.infoIcon} />
             </View>
           )}
         </View>
 
         {car.mileage !== 0 && (
           <View style={styles.infos}>
-            <MaterialIcons name="directions-car" size={iconSize} color={iconColor} style={styles.infoIcon} />
+            <MaterialIcons name="directions-car" size={iconSize} color={colors.white} style={styles.infoIcon} />
             <Text style={styles.text}>{`${i18n.t('MILEAGE')}${fr ? ' : ' : ': '}${helper.getMileage(car.mileage, language)}`}</Text>
           </View>
         )}
 
         <View style={styles.infos}>
-          <MaterialIcons name="local-gas-station" size={iconSize} color={iconColor} style={styles.infoIcon} />
+          <MaterialIcons name="local-gas-station" size={iconSize} color={colors.white} style={styles.infoIcon} />
           <Text style={styles.text}>{`${i18n.t('FUEL_POLICY')}${fr ? ' : ' : ': '}${helper.getFuelPolicy(car.fuelPolicy)}`}</Text>
         </View>
 
@@ -359,7 +361,7 @@ const Car = ({
           )}
           {car.theftProtection > -1 && (
             <View style={styles.extra}>
-              <MaterialIcons name={getExtraIcon(car.theftProtection)} color={getExtraColor(car.theftProtection)} size={iconSize} style={styles.infoIcon} />
+              <MaterialIcons name={getExtraIcon(car.theftProtection)} color={colors.white} size={iconSize} style={styles.infoIcon} />
               <Text style={styles.text}>{theftProtection}</Text>
             </View>
           )}
@@ -371,13 +373,13 @@ const Car = ({
           )}
           {car.fullInsurance > -1 && (
             <View style={styles.extra}>
-              <MaterialIcons name={getExtraIcon(car.fullInsurance)} color={getExtraColor(car.fullInsurance)} size={iconSize} style={styles.infoIcon} />
+              <MaterialIcons name={getExtraIcon(car.fullInsurance)} color={colors.white} size={iconSize} style={styles.infoIcon} />
               <Text style={styles.text}>{fullInsurance}</Text>
             </View>
           )}
           {car.additionalDriver > -1 && (
             <View style={styles.extra}>
-              <MaterialIcons name={getExtraIcon(car.additionalDriver)} color={getExtraColor(car.additionalDriver)} size={iconSize} style={styles.infoIcon} />
+              <MaterialIcons name={getExtraIcon(car.additionalDriver)} color={colors.white} size={iconSize} style={styles.infoIcon} />
               <Text style={styles.text}>{additionalDriver}</Text>
             </View>
           )}

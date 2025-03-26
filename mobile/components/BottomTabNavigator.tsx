@@ -12,6 +12,7 @@ import * as UserService from '../services/UserService'
 import HomeScreen from '@/screens/HomeScreen'
 import AboutScreen from '@/screens/AboutScreen'
 import SearchScreen from '@/screens/SearchScreen'
+import CheckoutScreen from '@/screens/CheckoutScreen'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -127,6 +128,7 @@ useEffect(() => {
       }}>
         <Stack.Screen name='MainTabs' component={BottomTab} />
         <Stack.Screen name="Cars" component={SearchScreen} />
+        <Stack.Screen name="Checkout" component={CheckoutScreen} />
       </Stack.Navigator>
     </NavigationContainer>
 )

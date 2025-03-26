@@ -99,7 +99,7 @@ const CustomDateTimePicker: React.FC<DateTimePickerProps> = ({
       paddingVertical: 10,
       borderWidth: 1,
       borderRadius: 10,
-      borderColor: colors.borderInput,
+      borderColor: colors.borderBlackBlur,
       backgroundColor: '#1e1e1f',
     },
     dateButton: {

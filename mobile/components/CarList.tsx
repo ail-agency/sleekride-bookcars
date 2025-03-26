@@ -200,6 +200,7 @@ const CarList = ({
           extraHeight={20}
           extraScrollHeight={20}
           enableOnAndroid
+          showsVerticalScrollIndicator={false}
           initialNumToRender={numToRender}
           maxToRenderPerBatch={numToRender}
           removeClippedSubviews
@@ -343,7 +344,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.headerBg
+    backgroundColor: colors.headerBg,
   },
   contentContainer: {
     alignSelf: 'stretch',

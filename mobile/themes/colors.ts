@@ -1,8 +1,11 @@
 const colors = {
     primary: '#675cfe',
+    green: '#09ab6f',
+    bgBlackBlur: '#1e1e1f',
     headerBg: '#121114',
     bgInput: '#545454',
     borderInput: '#707071',
+    borderBlackBlur: '#474646',
     secondary: '#999',
     iconColor: 'rgba(106, 112, 124, 1)',
     placeholderColor: 'rgba(131, 145, 161, 1)',

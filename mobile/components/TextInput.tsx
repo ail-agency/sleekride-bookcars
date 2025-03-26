@@ -81,7 +81,7 @@ const TextInputComponent = (
       height: small ? 37 : 55,
       borderWidth: 1,
       borderRadius: 10,
-      borderColor: props.error ? '#d32f2f' : 'rgba(0, 0, 0, 0.23)',
+      borderColor: props.error ? '#d32f2f' : colors.borderBlackBlur,
       fontSize: small ? 14 : 16,
       paddingTop: small ? 8 : 15,
       paddingRight: 40,
@@ -89,7 +89,7 @@ const TextInputComponent = (
       paddingLeft: 15,
     },
     helperText: {
-      color: props.error ? '#d32f2f' : 'rgba(0, 0, 0, 0.45)',
+      color: props.error ? '#d32f2f' : colors.white,
       fontSize: 11,
       fontWeight: '400',
       paddingLeft: 5,

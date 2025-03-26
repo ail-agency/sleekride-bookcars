@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native'
 import i18n from '@/lang/i18n'
 import Accordion from './Accordion'
 import SearchForm, { SearchFormProps } from './SearchForm'
+import colors from '@/themes/colors'
 
 type SearchFormFilterProps = SearchFormProps & {
   visible?: boolean
@@ -52,6 +53,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+    backgroundColor: colors.headerBg
   },
   contentContainer: {
     width: '100%',

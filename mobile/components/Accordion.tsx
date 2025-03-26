@@ -8,6 +8,7 @@ import {
   View
 } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
+import colors from '@/themes/colors'
 
 interface AccordionProps {
   style?: object
@@ -31,17 +32,17 @@ const Accordion = ({
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      borderTopWidth: 1,
-      borderRightWidth: 1,
+      borderWidth: 1,
       borderBottomWidth: open ? 1 : 0,
-      borderLeftWidth: 1,
-      borderColor: '#d9d8d9',
-      // borderRadius: 5,
-      backgroundColor: '#fff',
+      borderColor: '#474646',
+      borderTopLeftRadius: 8,
+      borderTopRightRadius: 8,
+      paddingTop: 5,
+      backgroundColor: colors.headerBg,
     },
     title: {
       flex: 1,
-      backgroundColor: '#fff',
+      backgroundColor: colors.headerBg,
     },
     titleTouchable: {
       flex: 1,
@@ -58,7 +59,7 @@ const Accordion = ({
       alignSelf: 'stretch',
       paddingRight: 5,
 
-      borderColor: '#d9d8d9',
+      borderColor: '#474646',
       borderBottomWidth: 1,
       // borderTopWidth: 1,
       // borderRightWidth: 1,
@@ -75,7 +76,7 @@ const Accordion = ({
       justifyContent: 'center',
     },
     titleText: {
-      color: 'rgba(0, 0, 0, .6)',
+      color: colors.white,
       fontWeight: '400',
       fontSize: 13,
     },
@@ -121,7 +122,7 @@ const Accordion = ({
               <Text style={styles.titleText}>{title}</Text>
             </View>
             <Animated.View style={{ transform: [{ rotateZ: arrowAngle }] }}>
-              <MaterialIcons name="keyboard-arrow-down" size={22} color="rgba(0, 0, 0, 0.7)" />
+              <MaterialIcons name="keyboard-arrow-down" size={22} color={colors.white} />
             </Animated.View>
           </View>
         </TouchableWithoutFeedback>

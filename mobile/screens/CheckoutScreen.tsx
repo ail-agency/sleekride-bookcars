@@ -30,6 +30,7 @@ import * as env from '@/config/env.config'
 import Backdrop from '@/components/Backdrop'
 import Indicator from '@/components/Indicator'
 import DriverLicense from '@/components/DriverLicense'
+import colors from '@/themes/colors'
 
 const CheckoutScreen = ({ navigation, route }: NativeStackScreenProps<StackParams, 'Checkout'>) => {
   const isFocused = useIsFocused()
@@ -808,7 +809,7 @@ const CheckoutScreen = ({ navigation, route }: NativeStackScreenProps<StackParam
                 <View style={styles.contentContainer}>
                   <View style={styles.section}>
                     <View style={styles.sectionHeader}>
-                      <MaterialIcons name="event-seat" size={iconSize} color={iconColor} />
+                      <MaterialIcons name="event-seat" size={iconSize} color={colors.white} />
                       <Text style={styles.sectionHeaderText}>{i18n.t('BOOKING_OPTIONS')}</Text>
                     </View>
 
@@ -881,7 +882,7 @@ const CheckoutScreen = ({ navigation, route }: NativeStackScreenProps<StackParam
 
                   <View style={styles.section}>
                     <View style={styles.sectionHeader}>
-                      <MaterialIcons name="directions-car" size={iconSize} color={iconColor} />
+                      <MaterialIcons name="directions-car" size={iconSize} color={colors.white} />
                       <Text style={styles.sectionHeaderText}>{i18n.t('BOOKING_DETAILS')}</Text>
                     </View>
 
@@ -919,7 +920,7 @@ const CheckoutScreen = ({ navigation, route }: NativeStackScreenProps<StackParam
                   {!authenticated && (
                     <View style={styles.section}>
                       <View style={styles.sectionHeader}>
-                        <MaterialIcons name="person" size={iconSize} color={iconColor} />
+                        <MaterialIcons name="person" size={iconSize} color={colors.white} />
                         <Text style={styles.sectionHeaderText}>{i18n.t('DRIVER_DETAILS')}</Text>
                       </View>
 
@@ -981,7 +982,7 @@ const CheckoutScreen = ({ navigation, route }: NativeStackScreenProps<StackParam
                   {car.supplier.licenseRequired && (
                     <View style={styles.section}>
                       <View style={styles.sectionHeader}>
-                        <MaterialIcons name="payment" size={iconSize} color={iconColor} />
+                        <MaterialIcons name="payment" size={iconSize} color={colors.white} />
                         <Text style={styles.sectionHeaderText}>{i18n.t('DRIVER_LICENSE')}</Text>
                       </View>
 
@@ -1007,7 +1008,7 @@ const CheckoutScreen = ({ navigation, route }: NativeStackScreenProps<StackParam
                   {(adManuallyChecked && additionalDriver) && (
                     <View style={styles.section}>
                       <View style={styles.sectionHeader}>
-                        <MaterialIcons name="person" size={iconSize} color={iconColor} />
+                        <MaterialIcons name="person" size={iconSize} color={colors.white} />
                         <Text style={styles.sectionHeaderText}>{i18n.t('ADDITIONAL_DRIVER')}</Text>
                       </View>
 
@@ -1080,7 +1081,7 @@ const CheckoutScreen = ({ navigation, route }: NativeStackScreenProps<StackParam
                   {car.supplier.payLater && (
                     <View style={styles.section}>
                       <View style={styles.sectionHeader}>
-                        <MaterialIcons name="settings" size={iconSize} color={iconColor} />
+                        <MaterialIcons name="settings" size={iconSize} color={colors.white} />
                         <Text style={styles.sectionHeaderText}>{i18n.t('PAYMENT_OPTIONS')}</Text>
                       </View>
 
@@ -1186,9 +1187,9 @@ const styles = StyleSheet.create({
   },
   section: {
     alignSelf: 'stretch',
-    backgroundColor: '#fbfbfb',
+    backgroundColor: colors.bgBlackBlur,
     borderWidth: 1,
-    borderColor: '#d9d8d9',
+    borderColor: colors.borderBlackBlur,
     borderRadius: 5,
     marginTop: 15,
     marginRight: 10,
@@ -1203,7 +1204,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   sectionHeaderText: {
-    color: '#444',
+    color: colors.white,
     fontSize: 16,
     fontWeight: '700',
     marginLeft: 5,
@@ -1214,9 +1215,10 @@ const styles = StyleSheet.create({
   extraSwitch: {
     fontWeight: '600',
     fontSize: 13,
+    color: colors.white
   },
   extraText: {
-    color: 'rgba(0, 0, 0, 0.35)',
+    color: colors.white,
     fontSize: 12,
     flex: 1,
     flexWrap: 'wrap',
@@ -1229,15 +1231,17 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     marginBottom: 2,
+    color: colors.white
   },
   detailText: {
-    color: 'rgba(0, 0, 0, 0.35)',
+    color: colors.white,
     fontSize: 12,
     marginBottom: 10,
   },
   detailTextBold: {
     fontSize: 15,
     fontWeight: '700',
+    color: colors.green,
   },
   supplier: {
     flexDirection: 'row',
@@ -1251,7 +1255,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   supplierText: {
-    color: '#a1a1a1',
+    color: colors.white,
     fontSize: 10,
     marginLeft: 5,
     width: 200,
@@ -1262,6 +1266,7 @@ const styles = StyleSheet.create({
   },
   tosText: {
     fontSize: 12,
+    color: colors.white,
   },
   date: {
     alignSelf: 'stretch',

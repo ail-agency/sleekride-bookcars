@@ -10,6 +10,7 @@ import i18n from '@/lang/i18n'
 import * as UserService from '@/services/UserService'
 import * as helper from '@/common/helper'
 import * as env from '@/config/env.config'
+import colors from '@/themes/colors'
 
 interface DriverLicenseProps {
   user?: bookcarsTypes.User
@@ -87,7 +88,7 @@ const DriverLicense = ({
     },
     label: {
       backgroundColor: '#F5F5F5',
-      color: 'rgba(0, 0, 0, 0.6)',
+      color: colors.white,
       fontSize: 12,
       fontWeight: '400',
       paddingRight: !hideLabel ? 5 : 0,
@@ -106,12 +107,13 @@ const DriverLicense = ({
       height: 55,
       borderWidth: 1,
       borderRadius: 10,
-      borderColor: 'rgba(0, 0, 0, 0.23)',
+      borderColor: colors.borderBlackBlur,
       fontSize: 16,
       paddingTop: 15,
       paddingRight: 40,
       paddingBottom: 15,
       paddingLeft: 15,
+      color: colors.white
     },
     actions: {
       flexDirection: 'row',
@@ -137,7 +139,7 @@ const DriverLicense = ({
           hitSlop={15}
           onPress={handleUpload}
         >
-          <MaterialIcons name="upload" size={iconSize} color={iconColor} />
+          <MaterialIcons name="upload" size={iconSize} color={colors.white} />
         </Pressable>
         {license && (
           <>
@@ -149,7 +151,7 @@ const DriverLicense = ({
                 Linking.openURL(url)
               }}
             >
-              <MaterialIcons name="visibility" size={iconSize} color={iconColor} />
+              <MaterialIcons name="visibility" size={iconSize} color={colors.white} />
             </Pressable>
             <Pressable
               style={styles.action}
@@ -177,7 +179,7 @@ const DriverLicense = ({
                 }
               }}
             >
-              <MaterialIcons name="delete" size={32} color={iconColor} />
+              <MaterialIcons name="delete" size={32} color={colors.white} />
             </Pressable>
           </>
         )}
